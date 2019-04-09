@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+    <div class = 'container'>
+
+        <div class = 'col-lg-8 p-5'>
+
+            <h1> {{ lesson.theme }} </h1>
+            <h4>  {{ lesson.course }} </h4>
+            <div> {{ lesson.time }} </div>
+
+        </div>
+        <a href="{% url 'lessons' %}" class="btn btn-info ml-5"> К списку уроков </a>
+
+    </div>
+
+
+
+{% endblock %}

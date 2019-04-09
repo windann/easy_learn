@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+
+    <div class="row d-flex justify-content-center">
+
+        {% for course in courses %}
+
+            <div class="card col-lg-3 p-3 m-3">
+
+                <div class="card-header">
+                    {{ course.name }}
+                </div>
+                <div class="card-body">
+                    <p class="card-text"> {{ course.description|slice:":10" }} </p>
+                    <a href="{{ course.get_absolute_url }}" class="btn btn-info"> Узнать больше </a>
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
