@@ -22,7 +22,7 @@ urlpatterns = [
 
     path('lessons/', view.lessons_list, name='lessons'),
     path('lesson/<str:number>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
-    #path('lesson/create', view.LessonCreate.as_view(), name='lesson_create_url'),
+    path('lesson/create', view.LessonCreate.as_view(), name='lesson_create_url'),
 
     path('courses/', view.courses_list, name='courses'),
     path('course/create', view.CourseCreate.as_view(), name='course_create_url'),
