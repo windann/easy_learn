@@ -8,23 +8,23 @@
 
             {% csrf_token %}
 
-            {% for field in question_form %}
+            {% for field_q in question_form %}
                 <div class="form-group">
+                    {{field_q.label}}
 
-                    {{ field.label }}
-                    {{ field }}
+                    {{ field_q }}
 
                 </div>
 
             {% endfor %}
 
-            {% for form in answer_forms%}
+            <h2>Ответы</h2>
 
-                {% for field in form %}
-                    <div class="form-group">
+            {% for form_a in answer_forms%}
 
+                {% for field in form_a %}
+                    <div class="form-group d-flex">
                         {{ field }}
-
                     </div>
 
             {% endfor %}

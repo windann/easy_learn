@@ -1,6 +1,7 @@
 from django import forms
-from .models import Course
+from .models import Course, Lesson, Test, Question, Answer
 from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
 
 
 class CourseForm(forms.ModelForm):
@@ -21,3 +22,49 @@ class CourseForm(forms.ModelForm):
             raise ValidationError('Имя курса должно быть уникальным!')
 
         return new_name
+
+
+class LessonForm(forms.ModelForm):
+
+    class Meta:
+        model = Lesson
+        fields = ['number', 'theme', 'time', 'course']
+
+        widgets = {
+            'number': forms.NumberInput(attrs={'class': 'form-control'}),
+            'theme': forms.TextInput(attrs={'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'class': 'form-control'}),
+            'course': forms.Select(attrs={'class': 'form-control'})
+        }
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['text']
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text', 'right']
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'right': forms.CheckboxInput(attrs={'class': 'form-control ml-5'}),
+            }
+
+
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = Test
+        fields = ['lesson', 'theme']
+
+        widgets = {
+            'theme': forms.TextInput(attrs={'class': 'form-control'}),
+            'lesson': forms.Select(attrs={'class': 'form-control'}),
+                   }

@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+<div class = 'd-flex justify-content-center'>
+
+    <form method="POST" class="m-3 col-lg-8">
+
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+
+                    {{ field.label }}
+                    {{ field }}
+
+                </div>
+
+            {% endfor %}
+
+            <button type="submit" class = 'btn btn-primary col-lg-2'>Сохранить</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

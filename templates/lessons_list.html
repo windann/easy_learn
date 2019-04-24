@@ -5,25 +5,28 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
 
+    <div class="container">
 
-    <div class="row d-flex justify-content-center">
+        <div class="row d-flex justify-content-center">
 
-        {% for lesson in lessons %}
+            {% for lesson in lessons %}
 
-            <div class="card col-lg-3 p-3 m-3">
+                <div class="card col-lg-3 p-3 m-3">
 
-                <div class="card-header">
-                    {{ lesson.course }}
+                    <div class="card-header">
+                        {{ lesson.course | capfirst}}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ lesson.theme | capfirst }}</h5>
+                        <p class="card-text"> {{ lesson.time | time:"H:i" }} </p>
+                        <a href="{{ lesson.get_absolute_url }}" class="btn btn-info"> Узнать больше </a>
+                    </div>
+
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ lesson.theme }}</h5>
-                    <p class="card-text"> {{ lesson.time }} </p>
-                    <a href="{{ lesson.get_absolute_url }}" class="btn btn-info"> Узнать больше </a>
-                </div>
 
-            </div>
+            {% endfor %}
 
-        {% endfor %}
+        </div>
 
     </div>
 

@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+        <h1 class="mb-5 mt-5">Информационная система поддержки учебного процесса в сфере дополнительного образования</h1>
+        <h2 class="mb-5">Возможности системы:</h2>
+        <div class="mb-5">
+            <ol class="list-group">
+                <li class="list-group-item">Добавление и просмотр курсов</li>
+                <li class="list-group-item">Добавление и просмотр уроков</li>
+                <li class="list-group-item">Добавление и просмотр вопросов для тестирований</li>
+            </ol>
+        </div>
+
+
+{% endblock %}

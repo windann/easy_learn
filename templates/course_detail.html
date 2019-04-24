@@ -5,11 +5,9 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
 
-    <div class = 'container'>
-
         <div class = 'col-lg-8 p-5'>
 
-            <h1> {{ course.name }} </h1>
+            <h1> {{ course.name | capfirst }} </h1>
             <div> {{ course.description }} </div>
 
             <h2 class="mt-3 mb-3">Уроки</h2>
@@ -22,8 +20,11 @@
 
         </div>
 
-        <a href="{% url 'courses' %}" class="btn btn-info ml-5"> К списку курсов </a>
+        <div class = 'actions'>
+            <a href="{% url 'courses' %}" class="btn btn-info ml-5 col-lg-2"> К списку курсов </a>
+            <a href="{% url 'lesson_create_url' %}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
+        </div>
 
-    </div>
+
 
 {% endblock %}

@@ -9,12 +9,12 @@
 
         <div class = 'col-lg-8 p-5'>
 
-            <h1> {{ lesson.theme }} </h1>
-            <h4>  {{ lesson.course }} </h4>
-            <div> {{ lesson.time }} </div>
+            <h1> {{ lesson.theme | capfirst }} </h1>
+            <h4>  {{ lesson.course | capfirst }} </h4>
+            <div> {{ lesson.time | time:"H:i" }} </div>
 
         </div>
-        <a href="{% url 'lessons' %}" class="btn btn-info ml-5"> К списку уроков </a>
+        <a href="{% url 'lessons' %}" class="btn btn-info ml-5 col-lg-2"> К списку уроков </a>
 
     </div>
 
