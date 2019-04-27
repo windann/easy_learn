@@ -15,42 +15,35 @@ from .forms import CourseForm, LessonForm, QuestionForm, AnswerForm, TestForm
 class TestCreate(View):
     def get(self, request):
 
-        test_form = TestForm(instance=Question())
+        test_form = TestForm(instance=Test())
         question_forms = [QuestionForm(prefix=str(
-            x), instance=Answer()) for x in range(3)]
-
-        answer_forms = [AnswerForm(prefix=str(
-            x), instance=Answer()) for x in range(3)]
+            x), instance=Question()) for x in range(2)]
 
         template = 'test_create.html'
 
-        context = {'test_form': test_form, 'question_forms': question_forms, 'answer_forms': answer_forms}
+        context = {'test_form': test_form, 'question_forms': question_forms}
 
         return render(request, template, context)
 
     def post(self, request):
         test_form = TestForm(request.POST, instance=Test())
+
         question_forms = [QuestionForm(request.POST, prefix=str(
-            x), instance=Question()) for x in range(0, 3)]
+            x), instance=Question()) for x in range(2)]
 
-        answer_forms = [AnswerForm(prefix=str(
-            x), instance=Answer()) for x in range(3)]
-
-        if test_form.is_valid() and all([cf.is_valid() for cf in question_forms]) and all([cf.is_valid() for cf in question_forms]):
+        if test_form.is_valid() and all([cf.is_valid() for cf in question_forms]):
             new_test = test_form.save(commit=False)
             new_test.save()
-            print('OK')
+            print(new_test.theme)
+
             for qf in question_forms:
                 new_question = qf.save(commit=False)
                 new_question.test = new_test
+                print(new_question.text)
                 new_question.save()
-                for af in answer_forms:
-                    new_answer = af.save(commit=False)
-                    new_answer.question = new_question
-                    new_answer.save()
             return redirect('test_detail_url', id=new_test.id)
 
-        context = {'test_form': test_form, 'question_forms': question_forms, 'answer_forms': answer_forms}
+        context = {'test_form': test_form, 'question_forms': question_forms}
 
         return render(request, 'test_create.html', context)
 
@@ -87,9 +80,15 @@ class TestDetail(View):
     template = 'test_detail.html'
 
     def get(self, request, id):
-        obj = get_object_or_404(self.model, id__iexact=id)
-        return render(request, self.template,
-                      context={self.model.__name__.lower(): obj})
+        test = get_object_or_404(self.model, id__iexact=id)
+        questions = list(Question.objects.filter(test=test.id))
+        question_with_answers = {}
+        for question in questions:
+            answers = list(Answer.objects.filter(question=question.id))
+            question_with_answers[question] = answers
+            print(question_with_answers[question])
+
+        return render(request, self.template, context={'test': test, 'questions': question_with_answers})
 
 
 class LessonCreate(View):
@@ -145,7 +144,8 @@ class QuestionDetail(ObjectDetailMixin, View):
 
     def get(self, request, id):
         question = get_object_or_404(self.model, id__iexact=id)
-        return render(request, self.template, context={'question': question})
+        answers = list(Answer.objects.filter(question=question.id))
+        return render(request, self.template, context={'question': question, 'answers': answers})
 
 
 def lessons_list(request):

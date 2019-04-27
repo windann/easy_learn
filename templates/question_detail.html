@@ -8,6 +8,11 @@
         <div class = 'col-lg-8 p-5'>
 
             <h1> {{ question.text | capfirst }} </h1>
+                <ol class="list-group">
+                    {% for answer in answers %}
+                        <li class="list-group-item">{{ answer.text }} </li>
+                    {% endfor %}
+            </ol>
 
         </div>
 

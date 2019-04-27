@@ -8,12 +8,18 @@
         <div class = 'col-lg-8 p-5'>
 
             <h1> {{ test.theme | capfirst }} </h1>
+            <h2> Урок № {{ test.lesson }} </h2>
 
             <h2 class="mt-3 mb-3">Список вопросов</h2>
 
             <ol class="list-group">
-                {% for question in questions %}
-                <li class="list-group-item"><a href="{{ lesson.get_absolute_url }}">{{ question.text }} </a></li>
+                {% for question, answers in questions.items %}
+                <li class="list-group-item">{{ question.text }}</li>
+                    <!--ol class="list-group">
+                        {% for answer in answers %}
+                        <li>{{ answer.text }}</li>
+                        {% endfor %}
+                    </ol-->
                 {% endfor %}
             </ol>
 

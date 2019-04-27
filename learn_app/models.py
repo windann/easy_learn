@@ -48,7 +48,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     text = models.CharField(max_length=30)
-    right = models.BooleanField()
+    right = models.BooleanField(null=True, default=False)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
     def __str__(self):
