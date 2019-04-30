@@ -27,7 +27,7 @@ class Lesson(models.Model):
 
     # генерация ссылок на урок
     def get_absolute_url(self):
-        return reverse('lesson_detail_url', kwargs={'number': self.number})
+        return reverse('lesson_detail_url', kwargs={'id': self.id})
 
 
 class Test(models.Model):
@@ -37,19 +37,14 @@ class Test(models.Model):
     def __str__(self):
         return self.theme
 
+    def get_absolute_url(self):
+        return reverse('test_detail_url', kwargs={'id': self.id})
+
 
 class Question(models.Model):
-    text = models.CharField(max_length=50)
+    text = models.CharField(max_length=80)
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.text
-
-
-class Answer(models.Model):
-    text = models.CharField(max_length=30)
-    right = models.BooleanField(null=True, default=False)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    right_answer = models.CharField(max_length=100)
 
     def __str__(self):
         return self.text

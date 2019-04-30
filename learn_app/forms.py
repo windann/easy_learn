@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Lesson, Test, Question, Answer
+from .models import Course, Lesson, Test, Question
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
@@ -41,22 +41,12 @@ class LessonForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['text']
+        fields = ['text', 'right_answer']
 
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'right_answer': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
-
-class AnswerForm(forms.ModelForm):
-    class Meta:
-        model = Answer
-        fields = ['text', 'right']
-
-        widgets = {
-            'text': forms.TextInput(attrs={'class': 'form-control'}),
-            'right': forms.CheckboxInput(attrs={'class': 'form-control ml-5'}),
-            }
 
 
 class TestForm(forms.ModelForm):
