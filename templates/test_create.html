@@ -25,14 +25,8 @@
                     {% for question in form %}
 
                         <div class="form-group">
+                            {{ question.label }}
                             {{ question }}
-                        </div>
-
-                    {% endfor %}
-
-                    {% for answer in answer_forms %}
-                        <div class="form-group d-flex">
-                            {{ answer }}
                         </div>
 
                     {% endfor %}

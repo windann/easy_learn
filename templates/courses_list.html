@@ -15,7 +15,7 @@
                         {{ course.name | capfirst }}
                     </div>
                     <div class="card-body">
-                        <p class="card-text"> {{ course.description }} </p>
+                        <p class="card-text"> {{ course.description | truncatewords:6 }} </p>
                         <a href="{{ course.get_absolute_url }}" class="btn btn-info"> Узнать больше </a>
                     </div>
 
