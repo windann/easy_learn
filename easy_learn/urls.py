@@ -23,17 +23,20 @@ urlpatterns = [
     path('', view.home_page, name='home'),
 
     path('lessons/', view.lessons_list, name='lessons'),
-    path('lesson/<str:number>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
+    path('lesson/<str:id>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
     path('lesson/create', view.LessonCreate.as_view(), name='lesson_create_url'),
 
     path('courses/', view.courses_list, name='courses'),
     path('course/create', view.CourseCreate.as_view(), name='course_create_url'),
     path('course/<str:name>', view.CourseDetail.as_view(), name='course_detail_url'),
 
-    path('question/create', view.QuestionCreate.as_view(), name='question_create_url'),
-    path('question/<str:id>/', view.QuestionDetail.as_view(), name='question_detail_url'),
-
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
     path('test/<str:id>/', view.TestDetail.as_view(), name='test_detail_url'),
+
+    path('registration/', view.RegistrationForm.as_view(), name='registration_url'),
+    #path('login/', view.LoginForm.as_view(), name='registration_url'),
+    #path('logout/', view.Logout.as_view(), name='registration_url'),
+
+
 
 ]
