@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+
+{% block content %}
+{% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+    <div class="container">
+        <div class = 'm-3 col-lg-8 form-group'>
+            <h1>Вход</h1>
+            <form method="POST" role="form">
+                {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+
+                            {{ field.label }}
+                            {{ field }}
+
+                        </div>
+                    {% endfor %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Войти</button>
+                    <a href="{% url 'registration_url' %}" class="btn btn-success ml-5 col-lg-3"> Регистрация </a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
