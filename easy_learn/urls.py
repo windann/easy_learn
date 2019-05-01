@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path
 import learn_app.views as view
 
+from django.conf.urls.static import static
+from django.conf import settings
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -33,10 +36,13 @@ urlpatterns = [
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
     path('test/<str:id>/', view.TestDetail.as_view(), name='test_detail_url'),
 
-    path('registration/', view.RegistrationForm.as_view(), name='registration_url'),
-    #path('login/', view.LoginForm.as_view(), name='registration_url'),
-    #path('logout/', view.Logout.as_view(), name='registration_url'),
+    path('registration/', view.Registration.as_view(), name='registration_url'),
+    path('user/<str:username>', view.UserDetail.as_view(), name='user_detail_url'),
+    path('login/', view.login_view, name='login'),
+    path('logout/', view.logout_view, name='logout'),
 
-
+    path('teachers/', view.teachers_list, name='teachers')
 
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,12 +1,15 @@
 from django.db import models
 from django.shortcuts import reverse
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 
 # Create your models here.
 
 
 class Course(models.Model):
-    name = models.CharField(max_length=20)
-    description = models.CharField(max_length=200)
+    name = models.CharField(max_length=20,verbose_name='Название курса')
+    description = models.CharField(max_length=200, verbose_name='Описание курса')
 
     def __str__(self):
         return self.name
@@ -16,11 +19,34 @@ class Course(models.Model):
         return reverse('course_detail_url', kwargs={'name': self.name})
 
 
+class UserType(models.Model):
+    user_type = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.user_type
+
+
+class User(AbstractUser):
+    avatar = models.ImageField(null=True, upload_to='media', verbose_name='Аватарка')
+    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, null=True, verbose_name='Тип пользвателя')
+    username = models.TextField(verbose_name='Имя пользователя', unique=True)
+    description = models.TextField(null=True, verbose_name='О себе')
+    first_name = models.TextField(verbose_name='Имя')
+    last_name = models.TextField(verbose_name='Фамилия')
+    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.username
+
+    def get_absolute_url(self):
+        return reverse('user_detail_url', kwargs={'username': self.username})
+
+
 class Lesson(models.Model):
-    number = models.IntegerField()
-    theme = models.CharField(max_length=50)
-    time = models.TimeField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    number = models.IntegerField(verbose_name='Номер урока')
+    theme = models.CharField(max_length=50, verbose_name='Тема урока')
+    time = models.TimeField(verbose_name='Время урока')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
 
     def __str__(self):
         return '{} {}'.format(self.number, self.theme)
@@ -31,8 +57,8 @@ class Lesson(models.Model):
 
 
 class Test(models.Model):
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    theme = models.CharField(max_length=20)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='По темам урока')
+    theme = models.CharField(max_length=20, verbose_name='Тема тестирования')
 
     def __str__(self):
         return self.theme
@@ -42,9 +68,9 @@ class Test(models.Model):
 
 
 class Question(models.Model):
-    text = models.CharField(max_length=80)
+    text = models.CharField(max_length=80, verbose_name='Вопрос')
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    right_answer = models.CharField(max_length=100)
+    right_answer = models.CharField(max_length=100, verbose_name='Ответ')
 
     def __str__(self):
         return self.text

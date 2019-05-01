@@ -1,7 +1,25 @@
 from django import forms
-from .models import Course, Lesson, Test, Question
+from .models import Course, Lesson, Test, Question, User
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
+
+#from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'avatar', 'user_type', 'description']
+
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'user_type': forms.Select(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
 
 
 class CourseForm(forms.ModelForm):

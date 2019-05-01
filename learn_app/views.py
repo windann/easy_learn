@@ -1,35 +1,65 @@
 from django.shortcuts import render
-from .models import Lesson, Course, Test, Question
+from .models import Lesson, Course, Test, Question, User
 from django.views.generic import View
 from django.shortcuts import redirect
 
 from django.shortcuts import get_object_or_404
 
-from .forms import CourseForm, LessonForm, QuestionForm, TestForm
+from .forms import CourseForm, LessonForm, QuestionForm, TestForm, RegistrationForm
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+
 from  django.views.generic.edit import FormView
 
-# Create your views here.
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
-class RegistrationForm(FormView):
-    def post(self, request):
-        form = UserCreationForm(request.POST)
+def login_view(request):
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/account')
+            login(request, form.get_user())
+            return redirect('home')
+    else:
+        form = AuthenticationForm(request)
+    return render(request, 'login.html', {'form': form})
 
+
+class UserDetail(View):
+    model = User
+    template = 'user_detail.html'
+
+    def get(self, request, username):
+        user = get_object_or_404(self.model, username__iexact=username)
+        return render(request, self.template, context={'user': user})
+
+
+class Registration(View):
     def get(self, request):
-        form = UserCreationForm()
-        context = {'form':form}
+        form = RegistrationForm()
+        template = 'registration.html'
+        context = {'form': form}
+
+        return render(request, template, context)
+
+    def post(self, request):
+        form = RegistrationForm(request.POST,request.FILES, instance=User())
+
+        if form.is_valid():
+            new_user = form.save()
+            new_user.save()
+            return redirect('user_detail_url', username=new_user.username)
+
+        context = {'form': form}
+        print(form.errors)
+
         return render(request, 'registration.html', context)
-
-
-class TestDelete(View):
-    def get(self, request, id):
-        test = Test.objects.get(id__iexact=id)
-        return render(request, 'test_delete_form.html')
 
 
 class TestCreate(View):
@@ -129,7 +159,7 @@ class LessonDetail(View):
         tests = list(Test.objects.filter(lesson= lesson.id))
         return render(request, self.template, context={'lesson': lesson, 'tests': tests})
 
-
+@login_required
 def lessons_list(request):
     lessons = Lesson.objects.all()
     return render(request, 'lessons_list.html', context={'lessons': lessons})
@@ -140,8 +170,19 @@ def courses_list(request):
     return render(request, 'courses_list.html', context={'courses': courses})
 
 
+def teachers_list(request):
+    teachers = User.objects.filter(user_type=1)
+    return render(request, 'teachers_list.html', context={'teachers': teachers})
+
+
 def home_page(request):
-    return render(request, 'index.html')
+    user = request.user
+    if request.user.is_authenticated:
+        message = 'Вы авторизованы как ' + str(user.username)
+    else:
+        message = 'Вы не авторизованы'
+    context = {'message': message}
+    return render(request, 'index.html', context)
 
 
 
