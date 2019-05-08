@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Lesson, Course, Test, Question, User
+from .models import Lesson, Course, Test, Question, User, UserType
 from django.views.generic import View
 from django.shortcuts import redirect
 
@@ -16,7 +16,7 @@ from  django.views.generic.edit import FormView
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 
 def login_view(request):
@@ -83,6 +83,7 @@ class TestCreate(View):
 
         if test_form.is_valid() and all([qf.is_valid() for qf in question_forms]):
             new_test = test_form.save(commit=False)
+            new_test.user = request.user
             new_test.save()
 
             for qf in question_forms:
@@ -136,8 +137,8 @@ class TestDetail(View):
     def get(self, request, id):
         test = get_object_or_404(self.model, id__iexact=id)
         questions = list(Question.objects.filter(test=test.id))
-
-        return render(request, self.template, context={'test': test, 'questions': questions})
+        #user = get_object_or_404(User, id=test.user)
+        return render(request, self.template, context={'test': test, 'questions': questions })
 
 
 class CourseDetail(View):
@@ -172,6 +173,7 @@ def courses_list(request):
 
 def teachers_list(request):
     teachers = User.objects.filter(user_type=1)
+    print(list(UserType.objects.all()))
     return render(request, 'teachers_list.html', context={'teachers': teachers})
 
 

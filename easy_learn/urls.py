@@ -34,6 +34,7 @@ urlpatterns = [
     path('course/<str:name>', view.CourseDetail.as_view(), name='course_detail_url'),
 
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
+    #path('test/pass', view.TestPass.as_view(), name='test_pass_url'),
     path('test/<str:id>/', view.TestDetail.as_view(), name='test_detail_url'),
 
     path('registration/', view.Registration.as_view(), name='registration_url'),

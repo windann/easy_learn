@@ -19,6 +19,8 @@ class Course(models.Model):
         return reverse('course_detail_url', kwargs={'name': self.name})
 
 
+# 1 - преподаватель
+# 2 - студент
 class UserType(models.Model):
     user_type = models.CharField(max_length=30)
 
@@ -27,7 +29,7 @@ class UserType(models.Model):
 
 
 class User(AbstractUser):
-    avatar = models.ImageField(null=True, upload_to='media', verbose_name='Аватарка')
+    avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, null=True, verbose_name='Тип пользвателя')
     username = models.TextField(verbose_name='Имя пользователя', unique=True)
     description = models.TextField(null=True, verbose_name='О себе')
@@ -57,6 +59,7 @@ class Lesson(models.Model):
 
 
 class Test(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='По темам урока')
     theme = models.CharField(max_length=20, verbose_name='Тема тестирования')
 
@@ -74,3 +77,14 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+
+
+class UserAnswer(models.Model):
+    test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=100, verbose_name='Ответ')

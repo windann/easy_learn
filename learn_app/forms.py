@@ -28,7 +28,9 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ['name', 'description']
 
-        widgets = {elem: forms.TextInput(attrs={'class': 'form-control'}) for elem in fields}
+        widgets = {'name': forms.TextInput(attrs={'class': 'form-control'}),
+                'description': forms.Textarea(attrs={'class': 'form-control'})
+                   }
 
     def clean_name(self):
         new_name = self.cleaned_data['name'].lower()
