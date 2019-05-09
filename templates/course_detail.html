@@ -22,7 +22,11 @@
 
         <div class = 'actions'>
             <a href="{% url 'courses' %}" class="btn btn-info ml-5 col-lg-2"> К списку курсов </a>
-            <a href="{% url 'lesson_create_url' %}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
+            {% if user.user_type.id == 1 %}
+                <a href="{% url 'lesson_create_url' %}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
+            {% else %}
+                <a href="" class="btn btn-info ml-5 col-lg-2"> Поступить на курс </a>
+            {% endif %}
         </div>
 
 

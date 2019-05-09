@@ -25,10 +25,20 @@
                                 <a class="nav-link" href="{% url 'teachers' %}">Наши преподаватели</a>
                             </li>
                         </ul>
-                    <div class = 'col-lg-6 d-flex'>
-                        <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать курс </a>
-                        <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать тестирование </a>
-                        <a href="{% url 'login' %}" class="btn btn-success ml-5 col-lg-2"> Вход </a>
+                    <div class = 'col-lg-6 d-flex justify-content-end align-items-center'>
+                        {% if user.is_authenticated %}
+                            {% if user.user_type.id == 1 %}
+                                <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать курс </a>
+                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать тестирование </a>
+                            {% endif %}
+                            {% if user.group is not None %}
+                                <a href="{{ user.group.get_absolute_url }}"> Моя группа </a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}" class="btn btn-success ml-5 col-lg-2"> Выход </a>
+
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-success ml-5 col-lg-2"> Вход </a>
+                        {% endif %}
                     </div>
                     </div>
                 </nav>

@@ -24,6 +24,20 @@
                     {% endif %}
                 </div>
             </div>
+            <div class = 'col-lg-12'>
+                <h5 class="ml-3">Группы: </h5>
+                <div class="col-lg-12">
+                    {% if user.user_type.id == 1%}
+                        <ol class="list-group">
+                            {% for group in groups %}
+                                <li class="list-group-item"><a href="{{ group.group.get_absolute_url }}">{{ group.group.name }} </a></li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </div>
+            </div>
+
+
 
         </div>
 
