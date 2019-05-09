@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Lesson, Course, Test, Question, User, UserType
+from .models import Lesson, Course, Test, Question, User, UserType, Group, TeacherGroup
 from django.views.generic import View
 from django.shortcuts import redirect
 
@@ -12,6 +12,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 
 from  django.views.generic.edit import FormView
+
 
 @login_required
 def logout_view(request):
@@ -37,7 +38,8 @@ class UserDetail(View):
 
     def get(self, request, username):
         user = get_object_or_404(self.model, username__iexact=username)
-        return render(request, self.template, context={'user': user})
+        groups = list(TeacherGroup.objects.filter(teacher=user.id))
+        return render(request, self.template, context={'user': user, 'groups': groups})
 
 
 class Registration(View):
@@ -160,6 +162,7 @@ class LessonDetail(View):
         tests = list(Test.objects.filter(lesson= lesson.id))
         return render(request, self.template, context={'lesson': lesson, 'tests': tests})
 
+
 @login_required
 def lessons_list(request):
     lessons = Lesson.objects.all()
@@ -185,6 +188,35 @@ def home_page(request):
         message = 'Вы не авторизованы'
     context = {'message': message}
     return render(request, 'index.html', context)
+
+
+def join_to_group(request, id):
+    user_id = request.user.id
+    group = get_object_or_404(Group, id__iexact=id)
+    user = get_object_or_404(User, id__iexact=user_id)
+    user.group = group
+    user.save()
+    return render(request, 'index.html')
+
+
+def groups_list(request):
+    groups = Group.objects.all()
+    return render(request, 'groups_list.html', context={'groups': groups})
+
+
+class GroupDetail(View):
+    model = Group
+    template = 'group_detail.html'
+
+    def get(self, request, name):
+        group = get_object_or_404(self.model, name__iexact=name)
+        students = list(User.objects.filter(group=group.id))
+        teacher = get_object_or_404(TeacherGroup, group=group.id)
+        return render(request, self.template, context={'students': students, 'group': group, 'teacher': teacher})
+
+
+
+
 
 
 

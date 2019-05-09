@@ -28,22 +28,6 @@ class UserType(models.Model):
         return self.user_type
 
 
-class User(AbstractUser):
-    avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
-    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, null=True, verbose_name='Тип пользвателя')
-    username = models.TextField(verbose_name='Имя пользователя', unique=True)
-    description = models.TextField(null=True, verbose_name='О себе')
-    first_name = models.TextField(verbose_name='Имя')
-    last_name = models.TextField(verbose_name='Фамилия')
-    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
-
-    def __str__(self):
-        return self.username
-
-    def get_absolute_url(self):
-        return reverse('user_detail_url', kwargs={'username': self.username})
-
-
 class Lesson(models.Model):
     number = models.IntegerField(verbose_name='Номер урока')
     theme = models.CharField(max_length=50, verbose_name='Тема урока')
@@ -58,6 +42,39 @@ class Lesson(models.Model):
         return reverse('lesson_detail_url', kwargs={'id': self.id})
 
 
+class Group(models.Model):
+    name = models.CharField(max_length=20, verbose_name='Название группы')
+    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('group_detail_url', kwargs={'name': self.name})
+
+
+class User(AbstractUser):
+    avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
+    user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, null=True, verbose_name='Тип пользвателя')
+    username = models.TextField(verbose_name='Имя пользователя', unique=True)
+    description = models.TextField(null=True, verbose_name='О себе')
+    first_name = models.TextField(verbose_name='Имя')
+    last_name = models.TextField(verbose_name='Фамилия')
+    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
+    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.username
+
+    def get_absolute_url(self):
+        return reverse('user_detail_url', kwargs={'username': self.username})
+
+
+class TeacherGroup(models.Model):
+    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
+
+
 class Test(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='По темам урока')
@@ -69,14 +86,8 @@ class Test(models.Model):
     def get_absolute_url(self):
         return reverse('test_detail_url', kwargs={'id': self.id})
 
-
-class Question(models.Model):
-    text = models.CharField(max_length=80, verbose_name='Вопрос')
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    right_answer = models.CharField(max_length=100, verbose_name='Ответ')
-
-    def __str__(self):
-        return self.text
+    def get_absolute_url_make(self):
+        return reverse('lesson_detail_url', kwargs={'id': self.id})
 
 
 class TestResult(models.Model):
@@ -88,3 +99,12 @@ class TestResult(models.Model):
 class UserAnswer(models.Model):
     test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
     answer = models.CharField(max_length=100, verbose_name='Ответ')
+
+
+class Question(models.Model):
+    text = models.CharField(max_length=80, verbose_name='Вопрос')
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    right_answer = models.CharField(max_length=100, verbose_name='Ответ')
+
+    def __str__(self):
+        return self.text

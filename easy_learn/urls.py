@@ -42,7 +42,10 @@ urlpatterns = [
     path('login/', view.login_view, name='login'),
     path('logout/', view.logout_view, name='logout'),
 
-    path('teachers/', view.teachers_list, name='teachers')
+    path('teachers/', view.teachers_list, name='teachers'),
+
+    path('groups/', view.groups_list, name='groups'),
+    path('group/<str:name>', view.GroupDetail.as_view(), name='group_detail_url'),
 
 ]
 
