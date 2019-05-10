@@ -11,12 +11,19 @@
 
         <h4> <a href="{{ group.course.get_absolute_url }}">{{ group.course }}</a> </h4>
 
-        <h5 class = 'mt-5'>
-            Преподаватель:
-            <a href="{{ teacher.teacher.get_absolute_url }}">
-                {{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}
-            </a>
-        </h5>
+        {% if teacher is not None %}
+
+            <h5 class = 'mt-5'>
+                Преподаватель:
+                <a href="{{ teacher.teacher.get_absolute_url }}">
+                    {{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}
+                </a>
+            </h5>
+        {% else %}
+            <div>
+                Преподаватель пока не назначен.
+            </div>
+        {% endif %}
 
         <ol class="list-group pt-5 col-lg-6">
             {% for student in students %}

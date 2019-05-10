@@ -46,6 +46,7 @@ urlpatterns = [
 
     path('groups/', view.groups_list, name='groups'),
     path('group/<str:name>', view.GroupDetail.as_view(), name='group_detail_url'),
+    path('join/<str:name>', view.join_to_group, name='join_group'),
 
 ]
 

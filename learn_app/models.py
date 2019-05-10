@@ -18,6 +18,10 @@ class Course(models.Model):
     def get_absolute_url(self):
         return reverse('course_detail_url', kwargs={'name': self.name})
 
+    def join_to_group_url(self):
+        print(1)
+        return reverse('join_group', kwargs={'name': self.name})
+
 
 # 1 - преподаватель
 # 2 - студент
@@ -60,7 +64,6 @@ class User(AbstractUser):
     description = models.TextField(null=True, verbose_name='О себе')
     first_name = models.TextField(verbose_name='Имя')
     last_name = models.TextField(verbose_name='Фамилия')
-    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
     group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):

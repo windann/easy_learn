@@ -38,14 +38,13 @@ for _ in range(5):
     registration_date = datetime.today()
     password = fake.password()
     user_type = random.randint(1,2)
-    course_id = 1
-
+    group_id = 1
 
     cur.execute("""INSERT INTO learn_app_user ( username, 
                                                 first_name, 
                                                 last_name, 
                                                 avatar,
-                                                course_id, 
+                                                group_id, 
                                                 user_type_id, 
                                                 password,  
                                                 email,
@@ -55,7 +54,7 @@ for _ in range(5):
                                                 date_joined) 
                     VALUES ('{}', '{}', '{}', '{}','{}', '{}', '{}', '{}','{}', '{}', '{}', '{}');""".format(
 
-        username, first_name, last_name, avatar, course_id, user_type, password, email, False, False, False, registration_date))
+        username, first_name, last_name, avatar, group_id, user_type, password, email, False, False, False, registration_date))
 
     conn.commit()
 conn.close()

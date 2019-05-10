@@ -11,6 +11,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from  django.views.generic.edit import FormView
 
 
@@ -150,7 +152,7 @@ class CourseDetail(View):
     def get(self, request, name):
         course = get_object_or_404(self.model, name__iexact=name)
         lessons = list(Lesson.objects.filter(course=course.id))
-        return render(request, self.template, context={'course': course, 'lessons':lessons})
+        return render(request, self.template, context={'course': course, 'lessons': lessons})
 
 
 class LessonDetail(View):
@@ -190,9 +192,16 @@ def home_page(request):
     return render(request, 'index.html', context)
 
 
-def join_to_group(request, id):
+@login_required
+def join_to_group(request, name):
     user_id = request.user.id
-    group = get_object_or_404(Group, id__iexact=id)
+    course = get_object_or_404(Course, name__iexact=name)
+    groups = list(Group.objects.filter(course=course.id).order_by('-id'))
+    if len(groups) == 0:
+        group = Group(course=course, name=course.name + '_1')
+        group.save()
+    else:
+        group = groups[0]
     user = get_object_or_404(User, id__iexact=user_id)
     user.group = group
     user.save()
@@ -211,13 +220,9 @@ class GroupDetail(View):
     def get(self, request, name):
         group = get_object_or_404(self.model, name__iexact=name)
         students = list(User.objects.filter(group=group.id))
-        teacher = get_object_or_404(TeacherGroup, group=group.id)
+        try:
+            teacher = TeacherGroup.objects.get(group=group.id)
+        except ObjectDoesNotExist:
+            teacher = None
         return render(request, self.template, context={'students': students, 'group': group, 'teacher': teacher})
-
-
-
-
-
-
-
 
