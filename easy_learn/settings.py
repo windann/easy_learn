@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-APPS = ['learn_app']
+APPS = ['learn_app', 'mathfilters']
 
 INSTALLED_APPS += APPS
 

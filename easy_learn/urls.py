@@ -34,7 +34,8 @@ urlpatterns = [
     path('course/<str:name>', view.CourseDetail.as_view(), name='course_detail_url'),
 
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
-    #path('test/pass', view.TestPass.as_view(), name='test_pass_url'),
+    path('pass_test/<str:id>', view.TestPass.as_view(), name='test_pass_url'),
+    path('check_test/<str:id>', view.check_test_result, name='check_result'),
     path('test/<str:id>/', view.TestDetail.as_view(), name='test_detail_url'),
 
     path('registration/', view.Registration.as_view(), name='registration_url'),
@@ -48,6 +49,11 @@ urlpatterns = [
     path('group/<str:name>', view.GroupDetail.as_view(), name='group_detail_url'),
     path('join/<str:name>', view.join_to_group, name='join_group'),
 
+    path('check_group_rating/<str:name>', view.check_group_rating, name='check_group_rating'),
+    path('check_group_full_stat/<str:name>', view.check_group_full_stat,
+         name='check_group_full_stat'),
+
+    path('check_test_stat/<str:id>', view.check_test_stat, name='check_test_stat')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
