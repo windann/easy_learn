@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Lesson, Test, Question, User
+from .models import Course, Lesson, Test, Question, User, UserAnswer
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 
@@ -78,3 +78,13 @@ class TestForm(forms.ModelForm):
             'theme': forms.TextInput(attrs={'class': 'form-control'}),
             'lesson': forms.Select(attrs={'class': 'form-control'}),
                    }
+
+
+class PassTestForm(forms.ModelForm):
+    class Meta:
+        model = UserAnswer
+        fields = ['answer']
+
+        widgets = {
+            'answer': forms.TextInput(attrs={'class': 'form-control'})
+        }

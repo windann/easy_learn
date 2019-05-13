@@ -1,15 +1,21 @@
 from django.shortcuts import render
-from .models import Lesson, Course, Test, Question, User, UserType, Group, TeacherGroup
+from .models import Lesson, Course, Test, Question, User, UserType, Group, TeacherGroup, UserAnswer, TestResult
 from django.views.generic import View
 from django.shortcuts import redirect
 
 from django.shortcuts import get_object_or_404
 
-from .forms import CourseForm, LessonForm, QuestionForm, TestForm, RegistrationForm
+from .forms import CourseForm, LessonForm, QuestionForm, TestForm, RegistrationForm, PassTestForm
 
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+
+from django.db.models import Count, Max
+
+from collections import Counter
+
+
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -41,7 +47,7 @@ class UserDetail(View):
     def get(self, request, username):
         user = get_object_or_404(self.model, username__iexact=username)
         groups = list(TeacherGroup.objects.filter(teacher=user.id))
-        return render(request, self.template, context={'user': user, 'groups': groups})
+        return render(request, self.template, context={'user_p': user, 'groups': groups})
 
 
 class Registration(View):
@@ -58,10 +64,13 @@ class Registration(View):
         if form.is_valid():
             new_user = form.save()
             new_user.save()
+            new_user = authenticate(username=form.cleaned_data['username'],
+                                    password=form.cleaned_data['password1'],
+                                    )
+            login(request, new_user)
             return redirect('user_detail_url', username=new_user.username)
 
         context = {'form': form}
-        print(form.errors)
 
         return render(request, 'registration.html', context)
 
@@ -225,4 +234,190 @@ class GroupDetail(View):
         except ObjectDoesNotExist:
             teacher = None
         return render(request, self.template, context={'students': students, 'group': group, 'teacher': teacher})
+
+
+class TestPass(View):
+    model = Test
+    def get(self, request, id):
+
+        questions = list(Question.objects.filter(test=id))
+        print(questions)
+
+        test = {}
+        for question in questions:
+            test[question] = PassTestForm(instance=UserAnswer(), prefix=str(question))
+
+        return render(request, 'test_pass.html', context={'form': test})
+
+    def post(self, request, id):
+        test_o = get_object_or_404(self.model, id__iexact=id)
+        user = get_object_or_404(User, id__iexact=request.user.id)
+
+        test_result = TestResult(user=user, test=test_o)
+        test_result.save()
+
+        questions = list(Question.objects.filter(test=id))
+        print(questions)
+
+        test = {}
+        for question in questions:
+            test[question] = PassTestForm(instance=UserAnswer(), prefix=str(question), data=request.POST)
+
+        print(test.values())
+        print(test.keys())
+
+        if all([qf.is_valid() for qf in test.values()]):
+
+            for question, answer in test.items():
+                print(answer)
+                user_answer = answer.save(commit=False)
+                user_answer.question = question
+                user_answer.test = test_result
+                user_answer.answer = answer.cleaned_data['answer']
+                user_answer.save()
+
+            return redirect('check_result', id=test_result.id)
+
+        return render(request, 'test_pass.html', context={'form': test})
+
+
+def check_test_result(request, id):
+    count_right_answers = 0
+    test_result = get_object_or_404(TestResult, id__iexact=id)
+    answers = list(UserAnswer.objects.filter(test=test_result))
+
+    user = get_object_or_404(User, id__iexact=test_result.user.id)
+
+
+    for answer in answers:
+        question = Question.objects.get(id=answer.question.id)
+        right_answer = question.right_answer
+        if right_answer == answer.answer:
+            count_right_answers += 1
+
+    user.score = count_right_answers
+    user.save()
+
+    return render(request, 'test_result.html', context={'result': count_right_answers})
+
+
+"""def check_group_statistic(request, name):
+    group = get_object_or_404(Group, name__iexact=name)
+    students = User.objects.filter(group=group)
+
+    number_of_students = len(students)
+
+    test_results = {}
+    test_result_percents = {}
+    for student in students:
+        #results = {}
+        tests = list(TestResult.objects.filter(user=student))
+        for test in tests:
+            count_right_answers = 0
+            answers = UserAnswer.objects.filter(test=test)
+
+            for answer in answers:
+                question = Question.objects.get(id=answer.question.id)
+                right_answer = question.right_answer
+                if right_answer == answer.answer:
+                    count_right_answers += 1
+            #results[test] = {'answers': answers, 'number_of_right': count_right_answers}
+            test_result_percents[test] = {'student': student, 'number_of_right': count_right_answers}
+
+        #test_results[student] = results
+
+    percent_stat = {1: 0, 2: 0, 3: 0, 4: 0}
+    for test, number_of_right in test_result_percents.items():
+
+        percent = (number_of_right['number_of_right'] / 2) * 100
+        if percent == 100:
+            percent_stat[1] += 1
+        elif percent < 100 and percent >= 75:
+            percent_stat[2] += 1
+        elif percent < 75 and percent >= 50:
+            percent_stat[3] += 1
+        elif percent < 50:
+            percent_stat[4] += 1
+
+    percent_stat_list = []
+
+    for percent, count in percent_stat.items():
+        percent_stat_list.append([percent, count])
+
+    return render(request, 'test_result.html', context={'result': percent_stat_list, 'number_of_students': number_of_students})"""
+
+
+def check_group_rating(request, name):
+    group = get_object_or_404(Group, name__iexact=name)
+    students = list(User.objects.filter(group=group).order_by('-score'))
+    return render(request, 'group_rating.html', context={'students': students, 'group': group})
+
+
+def check_group_full_stat(request, name):
+    group = get_object_or_404(Group, name__iexact=name)
+    students = User.objects.filter(group=group)
+
+    test_student = {}
+
+    for student in students:
+        tests = TestResult.objects.filter(user=student)
+        tries_count = TestResult.objects.filter(user=student).annotate(tries=Count('user'))
+        last_try = TestResult.objects.filter(user=student).latest('date')
+        answers = UserAnswer.objects.filter(test=last_try)
+
+        last_try_count = 0
+        for answer in answers:
+            question = Question.objects.get(id=answer.question.id)
+            right_answer = question.right_answer
+            if right_answer == answer.answer:
+                last_try_count += 1
+
+
+        scores = []
+
+        for test in tests:
+            count_right_answers = 0
+            answers = UserAnswer.objects.filter(test=test)
+
+            for answer in answers:
+                question = Question.objects.get(id=answer.question.id)
+                right_answer = question.right_answer
+                if right_answer == answer.answer:
+                    count_right_answers += 1
+            scores.append(count_right_answers)
+
+        test_student[student] = {'number_of_tries': len(tries_count),
+                                 'last_try': last_try_count,
+                                 'best_try': max(scores),
+                                 'worst_try': min(scores),
+                                 }
+
+    return render(request, 'group_full_stat.html', context={'tests': test_student})
+
+
+def check_test_stat(request, id):
+    test = get_object_or_404(Test, id__iexact=id)
+
+    test_results = TestResult.objects.filter(test=test)
+    result = []
+    for test_result in test_results:
+
+        answers = UserAnswer.objects.filter(test=test_result)
+        count_right_answers = 0
+        for answer in answers:
+            question = Question.objects.get(id=answer.question.id)
+            right_answer = question.right_answer
+            if right_answer == answer.answer:
+                count_right_answers += 1
+
+        result.append(count_right_answers)
+
+    result = Counter(result)
+
+    information_for_diagram = []
+
+    for result, count in result.items():
+        information_for_diagram.append([result, count])
+
+    return render(request, 'test_stat.html', context={'result': information_for_diagram, 'test': test})
 

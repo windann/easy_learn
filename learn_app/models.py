@@ -56,6 +56,12 @@ class Group(models.Model):
     def get_absolute_url(self):
         return reverse('group_detail_url', kwargs={'name': self.name})
 
+    def get_group_rating(self):
+        return reverse('check_group_rating', kwargs={'name': self.name})
+
+    def get_group_full_stat(self):
+        return reverse('check_group_full_stat', kwargs={'name': self.name})
+
 
 class User(AbstractUser):
     avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
@@ -65,6 +71,7 @@ class User(AbstractUser):
     first_name = models.TextField(verbose_name='Имя')
     last_name = models.TextField(verbose_name='Фамилия')
     group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
+    score = models.IntegerField(default=0, verbose_name='Балл')
 
     def __str__(self):
         return self.username
@@ -89,19 +96,8 @@ class Test(models.Model):
     def get_absolute_url(self):
         return reverse('test_detail_url', kwargs={'id': self.id})
 
-    def get_absolute_url_make(self):
-        return reverse('lesson_detail_url', kwargs={'id': self.id})
-
-
-class TestResult(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    date = models.DateTimeField()
-
-
-class UserAnswer(models.Model):
-    test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
-    answer = models.CharField(max_length=100, verbose_name='Ответ')
+    def check_test_stat(self):
+        return reverse('check_test_stat', kwargs={'id': self.id})
 
 
 class Question(models.Model):
@@ -111,3 +107,17 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+
+
+class UserAnswer(models.Model):
+    test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
+    answer = models.CharField(max_length=100, verbose_name='Ответ')
+
+
