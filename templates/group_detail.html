@@ -29,10 +29,18 @@
             {% for student in students %}
                 <li class="list-group-item">
                     <img class="rounded mr-3" src="{{ student.avatar.url }}" width="52px">
-                    <a href="{{ student.get_absolute_url }}">{{ student.first_name }} {{ student.last_name }}</a>
+                    <a href="{{ student.get_absolute_url }}" >{{ student.first_name }} {{ student.last_name }}</a>
                 </li>
             {% endfor %}
         </ol>
+
+        {% if user.user_type.id == 1 %}
+            <h5 class="mt-5">Статистика группы</h5>
+            <ol class="list-group col-lg-6">
+                <li class="list-group-item"><a href="{{ group.get_group_full_stat }}"> Результаты тестирований </a></li>
+                <li class="list-group-item"><a href="{{ group.get_group_rating }}">Рейтинг группы</a></li>
+            </ol>
+        {% endif %}
 
     </div>
 

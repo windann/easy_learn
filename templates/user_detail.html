@@ -10,24 +10,24 @@
         <div class = 'col-lg-11 m-5 p-5 border border-info rounded row d-flex justify-content-center'>
 
             <div class="col-lg-5">
-                <h1> {{ user.first_name | capfirst }} {{ user.last_name | capfirst }} </h1>
-                <h4>  {{ user.user_type }} </h4>
-                <img class="rounded mt-5 mb-5" src="{{ user.avatar.url }}" width="152px">
+                <h1> {{ user_p.first_name | capfirst }} {{ user_p.last_name | capfirst }} </h1>
+                <h4>  {{ user_p.user_type }} </h4>
+                <img class="rounded mt-5 mb-5" src="{{ user_p.avatar.url }}" width="152px">
             </div>
 
             <div class="col-lg-6">
                 <div>
-                    {% if user.description is not None %}
-                        {{ user.description }}
+                    {% if user_p.description is not None %}
+                        {{ user_p.description }}
                     {% else %}
-                        <div>Пользователь {{user.first_name | capfirst}} пока ничего о себе не рассказал :(</div>
+                        <div>Пользователь {{user_p.first_name | capfirst}} пока ничего о себе не рассказал :(</div>
                     {% endif %}
                 </div>
             </div>
             <div class = 'col-lg-12'>
                 <h5 class="ml-3">Группы: </h5>
                 <div class="col-lg-12">
-                    {% if user.user_type.id == 1%}
+                    {% if user_p.user_type.id == 1%}
                         <ol class="list-group">
                             {% for group in groups %}
                                 <li class="list-group-item"><a href="{{ group.group.get_absolute_url }}">{{ group.group.name }} </a></li>

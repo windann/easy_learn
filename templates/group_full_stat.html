@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+    {% load mathfilters %}
+
+        {% for student, tests in tests.items %}
+            <h6 class="mt-5">{{ student.first_name }}</h6>
+            <div>Количество попыток: {{ tests.number_of_tries }}</div>
+            <div>Последняя попытка: {{ tests.last_try |div:2 |mul:100}}%</div>
+            <div>Лучшая попытка: {{ tests.best_try |div:2 |mul:100 }}%</div>
+            <div>Худшая попытка: {{ tests.worst_try |div:2 |mul:100 }}%</div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

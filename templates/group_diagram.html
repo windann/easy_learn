@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+
+{% for student, tests in result.items %}
+
+{{student}}
+{{tests }}
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+    <div class = 'container'>
+
+        <h1 class = 'mt-5'> {{ group.name }} </h1>
+
+        <h4> <a href="{{ group.course.get_absolute_url }}">{{ group.course }}</a> </h4>
+
+        <ol class="list-group pt-5 col-lg-6">
+            {% for student in students %}
+                <li class="list-group-item">
+                    <img class="rounded mr-3" src="{{ student.avatar.url }}" width="52px">
+                    <a href="{{ student.get_absolute_url }}" >{{ student.first_name }} {{ student.last_name }}</a>
+                    <div>Количество балов: {{ student.score }}</div>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endblock %}
