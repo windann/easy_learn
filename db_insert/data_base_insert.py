@@ -38,25 +38,34 @@ for _ in range(5):
     registration_date = datetime.today()
     password = fake.password()
     user_type = random.randint(1,2)
-    group_id = 1
 
-    cur.execute("""INSERT INTO learn_app_user ( username, 
+    if user_type == 2:
+        score = random.randint(0, 100)
+    else:
+        score = 0
+
+    cur.execute("""INSERT INTO learn_app_user (username, 
                                                 first_name, 
                                                 last_name, 
-                                                avatar,
-                                                group_id, 
+                                                avatar, 
                                                 user_type_id, 
                                                 password,  
                                                 email,
                                                 is_superuser, 
                                                 is_staff, 
                                                 is_active, 
-                                                date_joined) 
-                    VALUES ('{}', '{}', '{}', '{}','{}', '{}', '{}', '{}','{}', '{}', '{}', '{}');""".format(
+                                                date_joined,
+                                                score) 
+                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}');""".format(
 
-        username, first_name, last_name, avatar, group_id, user_type, password, email, False, False, False, registration_date))
+        username, first_name, last_name, avatar, user_type, password, email,
+        False, False, False, registration_date, score))
 
     conn.commit()
+
+    with open('user_data.txt', 'a') as f:
+        f.write(username + ' ' + password + '\n')
+
 conn.close()
 
 # cur.execute("PRAGMA TABLE_INFO(learn_app_user);")
