@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .models import Lesson, Course, Test, Question, User, UserType, Group, TeacherGroup, UserAnswer, TestResult
+from .models import Lesson, Course, Test, Question, User, UserType, Group, TeacherGroup, UserAnswer, TestResult, Homework, UserGroup
 from django.views.generic import View
 from django.shortcuts import redirect
 
 from django.shortcuts import get_object_or_404
 
-from .forms import CourseForm, LessonForm, QuestionForm, TestForm, RegistrationForm, PassTestForm
+from .forms import CourseForm, LessonForm, QuestionForm, TestForm, RegistrationForm, PassTestForm, HomeworkForm
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
@@ -15,11 +15,14 @@ from django.db.models import Count, Max
 
 from collections import Counter
 
-
-
 from django.core.exceptions import ObjectDoesNotExist
 
+import random
+import operator
+
 from  django.views.generic.edit import FormView
+
+from django.utils.translation import gettext as _
 
 
 @login_required
@@ -150,7 +153,7 @@ class TestDetail(View):
     def get(self, request, id):
         test = get_object_or_404(self.model, id__iexact=id)
         questions = list(Question.objects.filter(test=test.id))
-        #user = get_object_or_404(User, id=test.user)
+        # user = get_object_or_404(User, id=test.user)
         return render(request, self.template, context={'test': test, 'questions': questions })
 
 
@@ -170,8 +173,12 @@ class LessonDetail(View):
 
     def get(self, request, id):
         lesson = get_object_or_404(self.model, id__iexact=id)
-        tests = list(Test.objects.filter(lesson= lesson.id))
-        return render(request, self.template, context={'lesson': lesson, 'tests': tests})
+        tests = list(Test.objects.filter(lesson=lesson.id))
+        try:
+            homework = Homework.objects.get(lesson=lesson)
+        except ObjectDoesNotExist:
+            homework = None
+        return render(request, self.template, context={'lesson': lesson, 'tests': tests, 'homework': homework})
 
 
 @login_required
@@ -203,20 +210,32 @@ def home_page(request):
 
 @login_required
 def join_to_group(request, name):
-    user_id = request.user.id
+    user = request.user
     course = get_object_or_404(Course, name__iexact=name)
-    groups = list(Group.objects.filter(course=course.id).order_by('-id'))
-    if len(groups) == 0:
-        group = Group(course=course, name=course.name + '_1')
-        group.save()
+    groups = list(Group.objects.filter(course=course.id).order_by('id'))
+    if groups:
+        group = random.choice(groups)
+        students = list(UserGroup.objects.filter(group=group.id))
+        if len(students) > 20:
+
+            group_number = int(groups[-1].name.split('_')[-1])
+            group_name = '_'.join([name[0] for name in name.split()]) + '_' + group_number
+            new_group = Group(course=course, name=group_name)
+            new_group.save()
+            group = new_group
+
     else:
-        group = groups[0]
-    user = get_object_or_404(User, id__iexact=user_id)
-    user.group = group
-    user.save()
-    return render(request, 'index.html')
+        group_name = '_'.join([name[0] for name in name.split()]) + '_1'
+        new_group = Group(course=course, name=group_name)
+        new_group.save()
+        group = new_group
 
+    user_group = UserGroup(user=user, group=group)
+    user_group.save()
 
+    return redirect('group_detail_url', name=group.name)
+
+@login_required
 def groups_list(request):
     groups = Group.objects.all()
     return render(request, 'groups_list.html', context={'groups': groups})
@@ -228,7 +247,7 @@ class GroupDetail(View):
 
     def get(self, request, name):
         group = get_object_or_404(self.model, name__iexact=name)
-        students = list(User.objects.filter(group=group.id))
+        students = list(UserGroup.objects.filter(group=group.id))
         try:
             teacher = TeacherGroup.objects.get(group=group.id)
         except ObjectDoesNotExist:
@@ -238,8 +257,8 @@ class GroupDetail(View):
 
 class TestPass(View):
     model = Test
-    def get(self, request, id):
 
+    def get(self, request, id):
         questions = list(Question.objects.filter(test=id))
         print(questions)
 
@@ -288,17 +307,19 @@ def check_test_result(request, id):
 
     user = get_object_or_404(User, id__iexact=test_result.user.id)
 
+    all_answers = 0
 
     for answer in answers:
         question = Question.objects.get(id=answer.question.id)
         right_answer = question.right_answer
         if right_answer == answer.answer:
             count_right_answers += 1
+        all_answers += 1
 
-    user.score = count_right_answers
+    user.score += count_right_answers
     user.save()
 
-    return render(request, 'test_result.html', context={'result': count_right_answers})
+    return render(request, 'test_result.html', context={'result': (count_right_answers/all_answers) * 100})
 
 
 """def check_group_statistic(request, name):
@@ -349,13 +370,28 @@ def check_test_result(request, id):
 
 def check_group_rating(request, name):
     group = get_object_or_404(Group, name__iexact=name)
-    students = list(User.objects.filter(group=group).order_by('-score'))
-    return render(request, 'group_rating.html', context={'students': students, 'group': group})
+    user_groups = list(UserGroup.objects.filter(group=group))
+
+    students = {}
+
+    for user_group in user_groups:
+        student = get_object_or_404(User, id__iexact=user_group.user.id)
+        students[student] = student.score
+
+    sorted_students = sorted(students.items(), key=operator.itemgetter(1), reverse=True)
+
+    return render(request, 'group_rating.html', context={'students': sorted_students, 'group': group})
 
 
 def check_group_full_stat(request, name):
     group = get_object_or_404(Group, name__iexact=name)
-    students = User.objects.filter(group=group)
+    user_groups = list(UserGroup.objects.filter(group=group))
+
+    students = {}
+
+    for user_group in user_groups:
+        student = get_object_or_404(User, id__iexact=user_group.user.id)
+        students[student] = student.score
 
     test_student = {}
 
@@ -421,3 +457,84 @@ def check_test_stat(request, id):
 
     return render(request, 'test_stat.html', context={'result': information_for_diagram, 'test': test})
 
+
+class CourseUpdate(View):
+    def get(self, request, name):
+        course = get_object_or_404(Course, name__iexact=name)
+        form = CourseForm(instance=course)
+        return render(request, 'course_update.html', context={'form': form})
+
+    def post(self, request, name):
+        course = get_object_or_404(Course, name__iexact=name)
+        form = CourseForm(request.POST, instance=course)
+
+        if form.is_valid():
+            changed_course = form.save()
+            return redirect('course_detail_url', name=changed_course.name)
+
+        return render(request, 'course_update.html', context={'form': form})
+
+
+class LessonUpdate(View):
+    def get(self, request, id):
+        lesson = get_object_or_404(Lesson, id__iexact=id)
+        form = LessonForm(instance=lesson)
+        return render(request, 'lesson_update.html', context={'form': form})
+
+    def post(self, request, id):
+        lesson = get_object_or_404(Lesson, id__iexact=id)
+        bound_form = LessonForm(request.POST, instance=lesson)
+
+        if bound_form.is_valid():
+            changed_lesson = bound_form.save()
+            return redirect('lesson_detail_url', id=changed_lesson.id)
+
+        return render(request, 'lesson_update.html', context={'form': bound_form})
+
+"""class UserUpdate(View):
+    def get(self, request, username):
+        user = get_object_or_404(User, username__iexact=username)
+        form = RegistrationForm(instance=user)
+        template = 'user_update.html'
+        context = {'form': form}
+
+        return render(request, template, context)
+
+    def post(self, request, username):
+        user = get_object_or_404(User, username__iexact=username)
+        form = RegistrationForm(instance=user)
+
+        if form.is_valid():
+            new_user = form.save()
+            new_user = authenticate(username=form.cleaned_data['username'],
+                                    password=form.cleaned_data['password1'],
+                                    )
+            login(request, new_user)
+            return redirect('user_detail_url', username=new_user.username)
+
+        context = {'form': form}
+
+        return render(request, 'user_update.html', context)"""
+
+
+class HomeworkAdd(View):
+    def get(self, request, id):
+        form = HomeworkForm()
+        return render(request, 'homework_create.html', context={'form': form})
+
+    def post(self, request, id):
+        form = HomeworkForm(request.POST)
+        lesson = get_object_or_404(Lesson, id__iexact=id)
+
+        if form.is_valid():
+            new_homework = form.save()
+            new_homework.lesson = lesson
+            new_homework.save()
+            return redirect('lesson_detail_url', id=lesson.id)
+
+        return render(request, 'homework_create.html', context={'form': form})
+
+
+def get_user_groups(self, request):
+    user = request.user
+    groups = Group.objects.filter()

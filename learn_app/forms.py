@@ -1,9 +1,7 @@
 from django import forms
-from .models import Course, Lesson, Test, Question, User, UserAnswer
+from .models import Course, Lesson, Test, Question, User, UserAnswer, Homework
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
-
-#from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -48,12 +46,11 @@ class LessonForm(forms.ModelForm):
 
     class Meta:
         model = Lesson
-        fields = ['number', 'theme', 'time', 'course']
+        fields = ['number', 'theme', 'course']
 
         widgets = {
             'number': forms.NumberInput(attrs={'class': 'form-control'}),
             'theme': forms.TextInput(attrs={'class': 'form-control'}),
-            'time': forms.TimeInput(attrs={'class': 'form-control'}),
             'course': forms.Select(attrs={'class': 'form-control'})
         }
 
@@ -88,3 +85,15 @@ class PassTestForm(forms.ModelForm):
         widgets = {
             'answer': forms.TextInput(attrs={'class': 'form-control'})
         }
+
+
+class HomeworkForm(forms.ModelForm):
+    class Meta:
+        model = Homework
+        fields = ['text', 'deadline']
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'deadline': forms.DateInput(attrs={'class': 'form-control'}),
+        }
+

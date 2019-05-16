@@ -19,8 +19,10 @@ class Course(models.Model):
         return reverse('course_detail_url', kwargs={'name': self.name})
 
     def join_to_group_url(self):
-        print(1)
         return reverse('join_group', kwargs={'name': self.name})
+
+    def update(self):
+        return reverse('course_update_url', kwargs={'name': self.name})
 
 
 # 1 - преподаватель
@@ -35,7 +37,6 @@ class UserType(models.Model):
 class Lesson(models.Model):
     number = models.IntegerField(verbose_name='Номер урока')
     theme = models.CharField(max_length=50, verbose_name='Тема урока')
-    time = models.TimeField(verbose_name='Время урока')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
 
     def __str__(self):
@@ -44,6 +45,12 @@ class Lesson(models.Model):
     # генерация ссылок на урок
     def get_absolute_url(self):
         return reverse('lesson_detail_url', kwargs={'id': self.id})
+
+    def update(self):
+        return reverse('lesson_update_url', kwargs={'id': self.id})
+
+    def add_homework(self):
+        return reverse('add_homework_url', kwargs={'id': self.id})
 
 
 class Group(models.Model):
@@ -70,7 +77,6 @@ class User(AbstractUser):
     description = models.TextField(null=True, verbose_name='О себе')
     first_name = models.TextField(verbose_name='Имя')
     last_name = models.TextField(verbose_name='Фамилия')
-    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
     score = models.IntegerField(default=0, verbose_name='Балл')
 
     def __str__(self):
@@ -78,6 +84,17 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('user_detail_url', kwargs={'username': self.username})
+
+    def update(self):
+        return reverse('user_update_url', kwargs={'username': self.username})
+
+    def get_all_groups(self):
+        return reverse('user_groups', kwargs={'username': self.username})
+
+
+class UserGroup(models.Model):
+    group = models.ForeignKey(Group, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 
 class TeacherGroup(models.Model):
@@ -99,6 +116,9 @@ class Test(models.Model):
     def check_test_stat(self):
         return reverse('check_test_stat', kwargs={'id': self.id})
 
+    def pass_test(self):
+        return reverse('test_pass_url', kwargs={'id': self.id})
+
 
 class Question(models.Model):
     text = models.CharField(max_length=80, verbose_name='Вопрос')
@@ -119,5 +139,11 @@ class UserAnswer(models.Model):
     test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
     answer = models.CharField(max_length=100, verbose_name='Ответ')
+
+
+class Homework(models.Model):
+    text = models.CharField(max_length=600, verbose_name='Домашнее задание')
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, verbose_name='Урок')
+    deadline = models.DateTimeField()
 
 
