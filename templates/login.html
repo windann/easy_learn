@@ -14,6 +14,14 @@
                     {% for field in form %}
                         <div class="form-group">
 
+                            {% if field.errors %}
+                                <div class = 'alert alert-danger'>
+                                    {% for error in field.errors %}
+                                        <div class="p-3">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             {{ field.label }}
                             {{ field }}
 

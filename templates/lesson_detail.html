@@ -16,11 +16,37 @@
         </div>
         <h4 class="ml-5 mb-5"> Тестирования по уроку </h4>
         <ol class="list-group pl-5 pb-5 col-lg-6">
-            {% for test in tests %}
-                <li class="list-group-item"><a href="{{ test.get_absolute_url }}">{{ test.theme }} </a></li>
-            {% endfor %}
+            {% if user.user_type.id == 1 %}
+
+                {% for test in tests %}
+                    <li class="list-group-item"><a href="{{ test.get_absolute_url }}">{{ test.theme }} </a></li>
+                {% endfor %}
+
+            {% else %}
+
+                {% for test in tests %}
+                    <li class="list-group-item"><a href="{{ test.pass_test }}">{{ test.theme }} </a></li>
+                {% endfor %}
+
+            {% endif %}
         </ol>
+
+        <h4 class="ml-5"> Домашнее задание </h4>
+        {% if homework %}
+            <div class="ml-5 mt-5">{{ homework.text }}</div>
+            <div class="ml-5 mb-5">Необходимо сдать до {{ homework.deadline |date:"SHORT_DATE_FORMAT" }}</div>
+        {% else %}
+            <div class="ml-5 mt-3 mb-3">Домашнего задания пока нет</div>
+        {% endif %}
         <a href="{% url 'lessons' %}" class="btn btn-info ml-5 col-lg-2"> К списку уроков </a>
+
+        {% if user.user_type.id == 1 %}
+            <a href="{{ lesson.update }}" class="btn btn-info ml-5 col-lg-2"> Изменить урок </a>
+            {% if not homework %}
+                <a href="{{ lesson.add_homework }}" class="btn btn-info ml-5 col-lg-2"> Добавить домашнее задание </a>
+            {% endif %}
+
+        {% endif %}
 
     </div>
 

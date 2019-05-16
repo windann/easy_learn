@@ -14,11 +14,19 @@
                     {{ field.label }}
                     {{ field }}
 
+                     {% if field.errors %}
+
+                        <div class="alert-danger">
+                            {{ field.errors }}
+                        </div>
+
+                    {% endif %}
+
                 </div>
 
             {% endfor %}
 
-            <button type="submit" class = 'btn btn-info col-lg-4'>Создать урок</button>
+            <button type="submit" class = 'btn btn-info col-lg-4'>Изменить курс</button>
 
     </form>
 

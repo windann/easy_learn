@@ -10,13 +10,15 @@
             <h1> {{ course.name | capfirst }} </h1>
             <div> {{ course.description }} </div>
 
-            <h2 class="mt-3 mb-3">Уроки</h2>
+            {% if lessons %}
+                <h2 class="mt-3 mb-3">Уроки</h2>
 
-            <ol class="list-group">
-                {% for lesson in lessons %}
-                <li class="list-group-item"><a href="{{ lesson.get_absolute_url }}">{{ lesson.theme }} </a></li>
-                {% endfor %}
-            </ol>
+                <ol class="list-group">
+                    {% for lesson in lessons %}
+                    <li class="list-group-item"><a href="{{ lesson.get_absolute_url }}">{{ lesson.theme }} </a></li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
 
         </div>
 
@@ -24,6 +26,7 @@
             <a href="{% url 'courses' %}" class="btn btn-info ml-5 col-lg-2"> К списку курсов </a>
             {% if user.user_type.id == 1 %}
                 <a href="{% url 'lesson_create_url' %}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
+                <a href="{{ course.update }}" class="btn btn-info ml-5 col-lg-2"> Изменить курс </a>
             {% else %}
                 <a href="{{ course.join_to_group_url }}" class="btn btn-info ml-5 col-lg-2"> Поступить на курс </a>
             {% endif %}

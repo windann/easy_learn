@@ -42,7 +42,11 @@
     </script>
 {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
-        <h2>Тест по теме {{test.theme}}</h2>
-        <div> Результаты </div>
-        <div id="chart_div"></div>
+        <h2 class="mt-5">Тест по теме {{ test.theme }}</h2>
+        {% if result %}
+            <div class="mt-5"> Результаты </div>
+            <div id="chart_div"></div>
+        {% else %}
+            <h6 class="mt-5">Тестирование пока ещё никто не проходил.</h6>
+        {% endif %}
 {% endblock %}

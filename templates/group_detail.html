@@ -28,8 +28,8 @@
         <ol class="list-group pt-5 col-lg-6">
             {% for student in students %}
                 <li class="list-group-item">
-                    <img class="rounded mr-3" src="{{ student.avatar.url }}" width="52px">
-                    <a href="{{ student.get_absolute_url }}" >{{ student.first_name }} {{ student.last_name }}</a>
+                    <img class="rounded mr-3" src="{{ student.user.avatar.url }}" width="52px">
+                    <a href="{{ student.user.get_absolute_url }}" >{{ student.user.first_name}} {{ student.user.last_name }}</a>
                 </li>
             {% endfor %}
         </ol>
