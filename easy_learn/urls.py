@@ -28,10 +28,12 @@ urlpatterns = [
     path('lessons/', view.lessons_list, name='lessons'),
     path('lesson/<str:id>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
     path('lesson/create', view.LessonCreate.as_view(), name='lesson_create_url'),
+    path('lesson/<str:id>/update', view.LessonUpdate.as_view(), name='lesson_update_url'),
 
     path('courses/', view.courses_list, name='courses'),
     path('course/create', view.CourseCreate.as_view(), name='course_create_url'),
     path('course/<str:name>', view.CourseDetail.as_view(), name='course_detail_url'),
+    path('course/<str:name>/update/', view.CourseUpdate.as_view(), name='course_update_url'),
 
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
     path('pass_test/<str:id>', view.TestPass.as_view(), name='test_pass_url'),
@@ -40,6 +42,7 @@ urlpatterns = [
 
     path('registration/', view.Registration.as_view(), name='registration_url'),
     path('user/<str:username>', view.UserDetail.as_view(), name='user_detail_url'),
+    # path('user/<str:username>/update', view.UserUpdate.as_view(), name='user_update_url'),
     path('login/', view.login_view, name='login'),
     path('logout/', view.logout_view, name='logout'),
 
@@ -53,7 +56,11 @@ urlpatterns = [
     path('check_group_full_stat/<str:name>', view.check_group_full_stat,
          name='check_group_full_stat'),
 
-    path('check_test_stat/<str:id>', view.check_test_stat, name='check_test_stat')
+    path('check_test_stat/<str:id>', view.check_test_stat, name='check_test_stat'),
+
+    path('add_homework/<str:id>', view.HomeworkAdd.as_view(), name='add_homework_url'),
+
+    path('user_groups/<str:username>', view.get_user_groups, name='user_groups'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
