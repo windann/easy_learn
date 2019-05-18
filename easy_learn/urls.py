@@ -27,7 +27,7 @@ urlpatterns = [
 
     path('lessons/', view.lessons_list, name='lessons'),
     path('lesson/<str:id>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
-    path('lesson/create', view.LessonCreate.as_view(), name='lesson_create_url'),
+    path('lesson/<str:name>/create', view.LessonCreate.as_view(), name='lesson_create_url'),
     path('lesson/<str:id>/update', view.LessonUpdate.as_view(), name='lesson_update_url'),
 
     path('courses/', view.courses_list, name='courses'),
@@ -60,7 +60,9 @@ urlpatterns = [
 
     path('add_homework/<str:id>', view.HomeworkAdd.as_view(), name='add_homework_url'),
 
-    path('user_groups/<str:username>', view.get_user_groups, name='user_groups'),
+    path('user_group', view.get_user_groups, name='user_groups'),
+
+    path('teach_group/<str:name>', view.teach_group, name='teach_group')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

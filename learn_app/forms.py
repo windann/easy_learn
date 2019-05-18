@@ -46,12 +46,11 @@ class LessonForm(forms.ModelForm):
 
     class Meta:
         model = Lesson
-        fields = ['number', 'theme', 'course']
+        fields = ['number', 'theme']
 
         widgets = {
             'number': forms.NumberInput(attrs={'class': 'form-control'}),
             'theme': forms.TextInput(attrs={'class': 'form-control'}),
-            'course': forms.Select(attrs={'class': 'form-control'})
         }
 
 

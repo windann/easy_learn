@@ -24,6 +24,9 @@ class Course(models.Model):
     def update(self):
         return reverse('course_update_url', kwargs={'name': self.name})
 
+    def add_lesson(self):
+        return reverse('lesson_create_url', kwargs={'name': self.name})
+
 
 # 1 - преподаватель
 # 2 - студент
@@ -37,7 +40,7 @@ class UserType(models.Model):
 class Lesson(models.Model):
     number = models.IntegerField(verbose_name='Номер урока')
     theme = models.CharField(max_length=50, verbose_name='Тема урока')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
+    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL, verbose_name='Курс')
 
     def __str__(self):
         return '{} {}'.format(self.number, self.theme)
@@ -69,6 +72,9 @@ class Group(models.Model):
     def get_group_full_stat(self):
         return reverse('check_group_full_stat', kwargs={'name': self.name})
 
+    def teach_group(self):
+        return reverse('teach_group', kwargs={'name': self.name})
+
 
 class User(AbstractUser):
     avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
@@ -87,9 +93,6 @@ class User(AbstractUser):
 
     def update(self):
         return reverse('user_update_url', kwargs={'username': self.username})
-
-    def get_all_groups(self):
-        return reverse('user_groups', kwargs={'username': self.username})
 
 
 class UserGroup(models.Model):

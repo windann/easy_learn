@@ -115,15 +115,17 @@ class TestCreate(View):
 
 
 class LessonCreate(View):
-    def get(self, request):
+    def get(self, request, name):
         form = LessonForm()
         return render(request, 'lesson_create.html', context={'form': form})
 
-    def post(self, request):
+    def post(self, request, name):
         bound_form = LessonForm(request.POST)
 
         if bound_form.is_valid():
             new_lesson = bound_form.save()
+            course = get_object_or_404(Course, name__iexact=name)
+            new_lesson.course = course
             new_lesson.save()
             return redirect('lesson_detail_url', id=new_lesson.id)
 
@@ -212,14 +214,21 @@ def home_page(request):
 def join_to_group(request, name):
     user = request.user
     course = get_object_or_404(Course, name__iexact=name)
+
     groups = list(Group.objects.filter(course=course.id).order_by('id'))
+
     if groups:
-        group = random.choice(groups)
+        group = groups[-1]
         students = list(UserGroup.objects.filter(group=group.id))
+
+        if user.id in [student.user.id for student in students]:
+            message = 'Вы уже учитесь на данном курсе!'
+            return render(request, 'message.html', context={'message': message})
+
         if len(students) > 20:
 
             group_number = int(groups[-1].name.split('_')[-1])
-            group_name = '_'.join([name[0] for name in name.split()]) + '_' + group_number
+            group_name = '_'.join([name[0] for name in name.split()]) + '_' + (group_number+1)
             new_group = Group(course=course, name=group_name)
             new_group.save()
             group = new_group
@@ -252,6 +261,7 @@ class GroupDetail(View):
             teacher = TeacherGroup.objects.get(group=group.id)
         except ObjectDoesNotExist:
             teacher = None
+
         return render(request, self.template, context={'students': students, 'group': group, 'teacher': teacher})
 
 
@@ -408,7 +418,6 @@ def check_group_full_stat(request, name):
             if right_answer == answer.answer:
                 last_try_count += 1
 
-
         scores = []
 
         for test in tests:
@@ -535,6 +544,34 @@ class HomeworkAdd(View):
         return render(request, 'homework_create.html', context={'form': form})
 
 
-def get_user_groups(self, request):
+def get_user_groups(request):
     user = request.user
-    groups = Group.objects.filter()
+
+    if user.user_type.id == 1:
+        groups = [user_group.group for user_group in TeacherGroup.objects.filter(teacher=user)]
+    else:
+        groups = [user_group.group for user_group in UserGroup.objects.filter(user=user)]
+
+    return render(request, 'groups_list.html', context={'groups': groups})
+
+
+def teach_group(request, name):
+    group = get_object_or_404(Group, name__iexact=name)
+
+    try:
+        teacher = TeacherGroup.objects.get(group=group, teacher=request.user)
+
+    except ObjectDoesNotExist:
+        teacher_group = TeacherGroup(teacher=request.user, group=group)
+        teacher_group.save()
+        return redirect('group_detail_url', name=group.name)
+
+    else:
+        if teacher:
+            print('hi')
+            message = 'Вы уже обучаете эту группу!'
+            return render(request, 'message.html', context={'message': message})
+
+
+
+
