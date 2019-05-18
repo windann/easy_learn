@@ -16,22 +16,30 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'courses' %}">Курсы</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'groups' %}">Группы</a>
-                            </li>
+
+                            {% if user.user_type.id == 2 %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'teachers' %}">Преподаватели</a>
                             </li>
+
+                            {% else %}
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'groups' %}">Группы</a>
+                            </li>
+
+                            {% endif %}
                         </ul>
-                    <div class = 'col-lg-6 d-flex justify-content-end align-items-center'>
+                    <div class = 'col-lg-7 d-flex justify-content-end align-items-center'>
+
                         {% if user.is_authenticated %}
+                            <a href="{% url 'user_groups' %}" class="col-lg-3">Мои группы </a>
                             {% if user.user_type.id == 1 %}
-                                <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать курс </a>
-                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-5"> Создать тестирование </a>
+
+                                <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-3"> Создать курс </a>
+                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-4"> Создать тестирование </a>
                             {% endif %}
-                            {% if user.group is not None %}
-                                <a href="{% url 'user_groups' %}"> Мои группы </a>
-                            {% endif %}
+
                             <a href="{% url 'logout' %}" class="btn btn-success ml-5 col-lg-2"> Выход </a>
 
                         {% else %}

@@ -25,7 +25,7 @@
         <div class = 'actions'>
             <a href="{% url 'courses' %}" class="btn btn-info ml-5 col-lg-2"> К списку курсов </a>
             {% if user.user_type.id == 1 %}
-                <a href="{% url 'lesson_create_url' %}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
+                <a href="{{ course.add_lesson }}" class="btn btn-info ml-5 col-lg-2"> Добавить урок </a>
                 <a href="{{ course.update }}" class="btn btn-info ml-5 col-lg-2"> Изменить курс </a>
             {% else %}
                 <a href="{{ course.join_to_group_url }}" class="btn btn-info ml-5 col-lg-2"> Поступить на курс </a>

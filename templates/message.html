@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+        <div class = 'col-lg-8 p-5'>
+            <h1>{{ message }}</h1>
+
+        </div>
+
+        {% if user.user_type.id == 1 %}
+            <div class = 'actions'>
+                <a href="{% url 'groups' %}" class="btn btn-info ml-5 col-lg-2"> К списку групп </a>
+            </div>
+
+        {% else %}
+
+        <div class = 'actions'>
+            <a href="{% url 'courses' %}" class="btn btn-info ml-5 col-lg-2"> К списку курсов </a>
+        </div>
+        {% endif %}
+
+
+{% endblock %}
