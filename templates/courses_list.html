@@ -14,11 +14,12 @@
                     <div class="card col-lg-3 p-3 m-3">
 
                         <div class="card-header">
-                            {{ course.name | capfirst }}
+                            <h5>{{ course.name | capfirst }}</h5>
                         </div>
+
                         <div class="card-body">
                             <p class="card-text"> {{ course.description | truncatewords:6 }} </p>
-                            <a href="{{ course.get_absolute_url }}" class="btn btn-info"> Узнать больше </a>
+                            <a href="{{ course.get_absolute_url }}" class="btn btn-outline-info"> Узнать больше </a>
                         </div>
 
                     </div>

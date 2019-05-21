@@ -29,16 +29,19 @@ urlpatterns = [
     path('lesson/<str:id>/', view.LessonDetail.as_view(), name='lesson_detail_url'),
     path('lesson/<str:name>/create', view.LessonCreate.as_view(), name='lesson_create_url'),
     path('lesson/<str:id>/update', view.LessonUpdate.as_view(), name='lesson_update_url'),
+    path('lesson/<str:id>/delete', view.LessonDelete.as_view(), name='lesson_delete_url'),
 
     path('courses/', view.courses_list, name='courses'),
     path('course/create', view.CourseCreate.as_view(), name='course_create_url'),
     path('course/<str:name>', view.CourseDetail.as_view(), name='course_detail_url'),
     path('course/<str:name>/update/', view.CourseUpdate.as_view(), name='course_update_url'),
+    path('course/<str:name>/delete/', view.CourseDelete.as_view(), name='course_delete_url'),
 
     path('test/create', view.TestCreate.as_view(), name='test_create_url'),
     path('pass_test/<str:id>', view.TestPass.as_view(), name='test_pass_url'),
     path('check_test/<str:id>', view.check_test_result, name='check_result'),
     path('test/<str:id>/', view.TestDetail.as_view(), name='test_detail_url'),
+    path('test/<str:id>/delete/', view.TestDelete.as_view(), name='test_delete_url'),
 
     path('registration/', view.Registration.as_view(), name='registration_url'),
     path('user/<str:username>', view.UserDetail.as_view(), name='user_detail_url'),
@@ -62,7 +65,12 @@ urlpatterns = [
 
     path('user_group', view.get_user_groups, name='user_groups'),
 
-    path('teach_group/<str:name>', view.teach_group, name='teach_group')
+    path('teach_group/<str:name>', view.teach_group, name='teach_group'),
+
+    path('materials/', view.materials_list, name='materials'),
+    path('material/create/<str:id>', view.MaterialCreate.as_view(), name='material_create_url'),
+    path('material/<str:id>', view.MaterialDetail.as_view(), name='material_detail_url'),
+    path('material/lesson/<str:id>', view.get_materials_for_lesson, name='material_get_url')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
