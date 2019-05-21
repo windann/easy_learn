@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Lesson, Test, Question, User, UserAnswer, Homework
+from .models import Course, Lesson, Test, Question, User, UserAnswer, Homework, Material
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
@@ -17,6 +17,10 @@ class RegistrationForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'user_type': forms.Select(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+        labels = {
+            'password2': 'Пароль',
         }
 
 
@@ -57,11 +61,12 @@ class LessonForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['text', 'right_answer']
+        fields = ['text', 'right_answer', 'answers']
 
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control'}),
-            'right_answer': forms.TextInput(attrs={'class': 'form-control'}),
+            'right_answer': forms.NumberInput(attrs={'class': 'form-control'}),
+            'answers': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -82,7 +87,7 @@ class PassTestForm(forms.ModelForm):
         fields = ['answer']
 
         widgets = {
-            'answer': forms.TextInput(attrs={'class': 'form-control'})
+            'answer': forms.NumberInput(attrs={'class': 'form-control'})
         }
 
 
@@ -94,5 +99,18 @@ class HomeworkForm(forms.ModelForm):
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control'}),
             'deadline': forms.DateInput(attrs={'class': 'form-control'}),
+        }
+
+
+class MaterialForm(forms.ModelForm):
+    class Meta:
+        model = Material
+        fields = ['theme', 'text', 'material_type']
+
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'theme': forms.TextInput(attrs={'class': 'form-control'}),
+            'material_type': forms.Select(attrs={'class': 'form-control'}),
+
         }
 

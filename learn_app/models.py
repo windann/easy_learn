@@ -2,14 +2,16 @@ from django.db import models
 from django.shortcuts import reverse
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from bs4 import BeautifulSoup as bs
+import requests
 
 
 # Create your models here.
 
 
 class Course(models.Model):
-    name = models.CharField(max_length=20,verbose_name='Название курса')
-    description = models.CharField(max_length=200, verbose_name='Описание курса')
+    name = models.CharField(max_length=50,verbose_name='Название курса')
+    description = models.CharField(max_length=400, verbose_name='Описание курса')
 
     def __str__(self):
         return self.name
@@ -27,6 +29,8 @@ class Course(models.Model):
     def add_lesson(self):
         return reverse('lesson_create_url', kwargs={'name': self.name})
 
+    def delete_url(self):
+        return reverse('course_delete_url', kwargs={'name': self.name})
 
 # 1 - преподаватель
 # 2 - студент
@@ -54,6 +58,15 @@ class Lesson(models.Model):
 
     def add_homework(self):
         return reverse('add_homework_url', kwargs={'id': self.id})
+
+    def delete_url(self):
+        return reverse('lesson_delete_url', kwargs={'id': self.id})
+
+    def add_material(self):
+        return reverse('material_create_url', kwargs={'id': self.id})
+
+    def get_material(self):
+        return reverse('material_get_url', kwargs={'id': self.id})
 
 
 class Group(models.Model):
@@ -84,6 +97,10 @@ class User(AbstractUser):
     first_name = models.TextField(verbose_name='Имя')
     last_name = models.TextField(verbose_name='Фамилия')
     score = models.IntegerField(default=0, verbose_name='Балл')
+
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self._meta.get_field('password').verbose_name = 'Пароль'
 
     def __str__(self):
         return self.username
@@ -122,31 +139,70 @@ class Test(models.Model):
     def pass_test(self):
         return reverse('test_pass_url', kwargs={'id': self.id})
 
+    def delete_url(self):
+        return reverse('test_delete_url', kwargs={'id': self.id})
+
 
 class Question(models.Model):
     text = models.CharField(max_length=80, verbose_name='Вопрос')
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    right_answer = models.CharField(max_length=100, verbose_name='Ответ')
+    right_answer = models.IntegerField(verbose_name='Номер правильного ответа')
+    answers = models.CharField(max_length=500, verbose_name='Варианты ответов (вводить через ",")',
+                               help_text='Введите варианты ответов через , ', null=True)
 
     def __str__(self):
         return self.text
+
+    def answers_as_list(self):
+        return self.answers.split(',')
 
 
 class TestResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
 
 
 class UserAnswer(models.Model):
     test = models.ForeignKey(TestResult, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
-    answer = models.CharField(max_length=100, verbose_name='Ответ')
+    answer = models.IntegerField(verbose_name='Ответ')
 
 
 class Homework(models.Model):
     text = models.CharField(max_length=600, verbose_name='Домашнее задание')
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, verbose_name='Урок')
-    deadline = models.DateTimeField()
+    deadline = models.DateTimeField(verbose_name='Срок сдачи (в формате "01/29/19")')
+
+
+class MaterialType(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Тип дополнительного материала')
+
+    def __str__(self):
+        return self.name
+
+
+class Material(models.Model):
+    material_type = models.ForeignKey(MaterialType, on_delete=models.SET_NULL, null=True,
+                                      verbose_name='Тип дополнительного материала')
+    text = models.CharField(max_length=200, verbose_name='Ссылка')
+    theme = models.CharField(max_length=100, verbose_name='Тема')
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True)
+
+    def get_title(self):
+        response = requests.get(self.text).content
+        html = bs(response, 'lxml')
+        return html.title.text
+
+    def make_video_src(self):
+        # https://youtu.be/bAdNtWCAslc
+        url = self.text.split('/')[-1]
+        result_url = 'https://www.youtube.com/embed/' + url
+        return result_url
+
+
+
+
 
 
