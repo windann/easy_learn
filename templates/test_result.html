@@ -15,6 +15,14 @@
             <img src = '{% static "img/happy.png" %}'>
             <h4>Нет предела совершенству!</h4>
         {% endif %}
+        <h4 class="mt-5">Количество верных ответов: {{ right }}.</h4>
+
+        {% if question_to_repeat %}
+            <h4 class="mt-5">Вопросы, которые необходимо повторить: </h4>
+            {% for question in question_to_repeat %}
+                <div>{{ question }}</div>
+            {% endfor %}
+        {% endif %}
     </div>
 
 {% endblock %}

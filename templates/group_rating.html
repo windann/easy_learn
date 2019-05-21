@@ -15,7 +15,7 @@
             {% for student in students %}
                 <li class="list-group-item">
                     <img class="rounded mr-3" src="{{ student.0.avatar.url }}" width="52px">
-                    <a href="{{ student.0.get_absolute_url }}" >{{ student.0.first_name }} {{ student.0.last_name }}</a>
+                    <a href="{{ student.0.get_absolute_url }}" class="text-info" >{{ student.0.first_name }} {{ student.0.last_name }}</a>
                     <div>Количество балов: {{ student.0.score }}</div>
                 </li>
             {% endfor %}

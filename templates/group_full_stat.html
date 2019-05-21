@@ -8,11 +8,13 @@
     {% load mathfilters %}
 
         {% for student, tests in tests.items %}
-            <h6 class="mt-5">{{ student.first_name }}</h6>
+        <div class="mt-5">
+            <a href ="{{ student.get_absolute_url }}" class="mt-5 text-info">{{ student.first_name }}</a>
             <div>Количество попыток: {{ tests.number_of_tries }}</div>
             <div>Последняя попытка: {{ tests.last_try |div:2 |mul:100}}%</div>
             <div>Лучшая попытка: {{ tests.best_try |div:2 |mul:100 }}%</div>
             <div>Худшая попытка: {{ tests.worst_try |div:2 |mul:100 }}%</div>
+        </div>
         {% endfor %}
 
     </div>

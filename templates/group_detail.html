@@ -9,13 +9,13 @@
 
         <h1 class = 'mt-5'> {{ group.name }} </h1>
 
-        <h4> <a href="{{ group.course.get_absolute_url }}">{{ group.course }}</a> </h4>
+        <h4> <a class = 'text-success' href="{{ group.course.get_absolute_url }}">{{ group.course }}</a> </h4>
 
         {% if teacher is not None %}
 
             <h5 class = 'mt-5'>
                 Преподаватель:
-                <a href="{{ teacher.teacher.get_absolute_url }}">
+                <a href="{{ teacher.teacher.get_absolute_url }}" class="text-info">
                     {{ teacher.teacher.first_name }} {{ teacher.teacher.last_name }}
                 </a>
             </h5>
@@ -27,23 +27,25 @@
 
 
         <h5 class="mt-5">Студенты: </h5>
-        <ol class="list-group col-lg-6">
+        <ol class="list-group col-lg-6 mb-5">
             {% for student in students %}
-                <li class="list-group-item">
+                <li class="list-group-item border-dark">
                     <img class="rounded mr-3" src="{{ student.user.avatar.url }}" width="52px">
-                    <a href="{{ student.user.get_absolute_url }}" >{{ student.user.first_name}} {{ student.user.last_name }}</a>
+                    <a class="text-info" href="{{ student.user.get_absolute_url }}" >{{ student.user.first_name}} {{ student.user.last_name }}</a>
                 </li>
             {% endfor %}
         </ol>
 
         {% if user.user_type.id == 1 %}
-            <h5 class="mt-5">Статистика группы</h5>
+            <h5 class="">Статистика группы</h5>
             <ol class="list-group col-lg-6">
-                <li class="list-group-item"><a href="{{ group.get_group_full_stat }}"> Результаты тестирований </a></li>
-                <li class="list-group-item"><a href="{{ group.get_group_rating }}">Рейтинг группы</a></li>
+                <li class="list-group-item border-dark"><a href="{{ group.get_group_full_stat }}" class="text-success"> Результаты тестирований </a></li>
+                <li class="list-group-item border-dark"><a href="{{ group.get_group_rating }}" class="text-success">Рейтинг группы</a></li>
             </ol>
-            <a href="{{ group.teach_group }}" class=" btn btn-info col-lg-4 mt-5">Преподавать группе</a>
-
+            {% if teacher is None %}
+                <a href="{{ group.teach_group }}" class=" btn btn-outline-info col-lg-4 mt-5">Преподавать группе</a>
+            {% endif %}
+        {% endif %}
     </div>
 
 

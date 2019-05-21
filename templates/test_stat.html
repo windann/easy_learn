@@ -22,11 +22,11 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
         data.addColumn('number', 'Slices');
-        var a = [
-        ['{{result.0.0 |div:2 |mul:100 }}%', {{result.0.1}}],
-        ['{{result.1.0 |div:2 |mul:100 }}%', {{result.1.1}}],
-        ['{{result.2.0 |div:2 |mul:100 }}%', {{result.2.1}}],
-        ];
+        var a = []
+        {% for res in result%}
+            a.push(['{{res.0 |div:5 |mul:100 }}%', {{res.1}}]);
+        {% endfor %}
+
         data.addRows(a);
 
         // Set chart options
@@ -38,15 +38,16 @@
         var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
-      console.log({{result}})
+
     </script>
 {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+<div class="flex-column d-flex align-items-center">
         <h2 class="mt-5">Тест по теме {{ test.theme }}</h2>
         {% if result %}
-            <div class="mt-5"> Результаты </div>
             <div id="chart_div"></div>
         {% else %}
             <h6 class="mt-5">Тестирование пока ещё никто не проходил.</h6>
         {% endif %}
+</div>
 {% endblock %}

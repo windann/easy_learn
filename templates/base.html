@@ -3,8 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Система поддержки процесса дополнительного образования</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/litera/bootstrap.min.css">
-    </head>
+<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/united/bootstrap.min.css" rel="stylesheet" integrity="sha384-WTtvlZJeRyCiKUtbQ88X1x9uHmKi0eHCbQ8irbzqSLkE0DpAZuixT5yFvgX0CjIu" crossorigin="anonymous">    </head>
     <body>
         <header class = 'header'>
                 <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between">
@@ -22,6 +21,10 @@
                                 <a class="nav-link" href="{% url 'teachers' %}">Преподаватели</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'materials' %}">Материалы</a>
+                            </li>
+
                             {% else %}
 
                             <li class="nav-item">
@@ -33,17 +36,17 @@
                     <div class = 'col-lg-7 d-flex justify-content-end align-items-center'>
 
                         {% if user.is_authenticated %}
-                            <a href="{% url 'user_groups' %}" class="col-lg-3">Мои группы </a>
+                            <a href="{% url 'user_groups' %}" class="text-success col-lg-3">Мои группы </a>
                             {% if user.user_type.id == 1 %}
 
                                 <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-3"> Создать курс </a>
-                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-4"> Создать тестирование </a>
+                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-4"> Создать тест </a>
                             {% endif %}
 
-                            <a href="{% url 'logout' %}" class="btn btn-success ml-5 col-lg-2"> Выход </a>
+                            <a href="{% url 'logout' %}" class="btn btn-outline-success ml-5 col-lg-2"> Выход </a>
 
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-success ml-5 col-lg-2"> Вход </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-success ml-5 col-lg-2"> Вход </a>
                         {% endif %}
                     </div>
                     </div>

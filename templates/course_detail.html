@@ -5,6 +5,8 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
 
+        <a href="{% url 'courses' %}" class="btn btn-outline-info ml-5 mt-5 col-lg-2"> К списку курсов </a>
+
         <div class = 'col-lg-8 p-5'>
 
             <h1> {{ course.name | capfirst }} </h1>
@@ -23,7 +25,7 @@
         </div>
 
         <div class = 'actions'>
-            <a href="{% url 'courses' %}" class="btn btn-outline-info ml-5 col-lg-2"> К списку курсов </a>
+
             {% if user.user_type.id == 1 %}
                 <a href="{{ course.add_lesson }}" class="btn btn-outline-info ml-5 col-lg-2"> Добавить урок </a>
                 <a href="{{ course.update }}" class="btn btn-outline-info ml-5 col-lg-2"> Изменить курс </a>

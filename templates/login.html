@@ -11,7 +11,7 @@
             <h1>Вход</h1>
             <form method="POST" role="form">
                 {% csrf_token %}
-                    {% for field in form %}
+
                         <div class="form-group">
 
                             {% if field.errors %}
@@ -22,11 +22,14 @@
                                 </div>
                             {% endif %}
 
-                            {{ field.label }}
-                            {{ field }}
+                            {{ form.username.label }}
+                            {{ form.username }}
+
+                            Пароль
+                            {{ form.password }}
 
                         </div>
-                    {% endfor %}
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Войти</button>
                     <a href="{% url 'registration_url' %}" class="btn btn-success ml-5 col-lg-3"> Регистрация </a>

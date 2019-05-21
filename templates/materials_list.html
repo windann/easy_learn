@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+    <div class="container">
+
+        {% if videos or sites %}
+
+            {% if videos %}
+
+                <h3 class="mt-5">Видео</h3>
+                <div class="row d-flex justify-content-center">
+
+                    {% for video in videos %}
+
+                        <div class="card col-lg-3 p-3 m-3">
+
+                            <div class="card-header">
+                                {{ video.theme | capfirst}}
+                            </div>
+                            <iframe height="200" src="{{ video.make_video_src }}"
+                                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+            {% if sites %}
+                <h3 class="mt-5">Полезные ссылки</h3>
+                <div class="row d-flex justify-content-center">
+
+                    {% for site in sites %}
+
+                        <div class="card col-lg-3 p-3 m-3">
+
+                            <div class="card-header">
+                                <a href="{{ site.text }}">{{ site.get_title }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+        {% else %}
+            <h1 class="mt-5">Материал пока не добавлены</h1>
+        {% endif %}
+
+    </div>
+{% endblock %}

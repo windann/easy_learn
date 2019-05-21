@@ -9,20 +9,26 @@
 
         <div class="row d-flex justify-content-center">
 
-            {% for group in groups %}
+            {% if groups %}
 
-                <div class="card col-lg-3 p-3 m-3">
+                {% for group in groups %}
 
-                    <div class="card-header">
-                        <a href="{{ group.get_absolute_url }}">{{ group.name | capfirst}}</a>
+                    <div class="card col-lg-3 p-3 m-3">
+
+                        <div class="card-header">
+                            <h5>{{ group.name | capfirst }}</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <a href="{{ group.get_absolute_url }}" class="btn btn-outline-info"> Узнать больше </a>
+                        </div>
+
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ group.course | capfirst }}</h5>
-                    </div>
 
-                </div>
-
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <h1 class="mt-5">Текущих групп пока нет.</h1>
+            {% endif %}
 
         </div>
 

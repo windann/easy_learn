@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+
+        <div class = 'col-lg-8 p-5 border-dark'>
+
+            <h1> {{ material.theme | capfirst }} </h1>
+            <div> {{ material.url }} </div>
+            {% if material.material_type.name == 'видео' %}
+                <iframe width="560" height="315" src="{{ material.make_video_src }}"
+                        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            {% elif material.material_type.name == 'ссылка' %}
+
+                {% if material.get_title %}
+                    <a href="{{ material.text }}">{{ material.get_title }}</a>
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+{% endblock %}

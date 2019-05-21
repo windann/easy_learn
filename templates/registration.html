@@ -10,23 +10,42 @@
 
             {% csrf_token %}
 
-            {% for field in form %}
-                <div class="form-group">
 
-                    {% if field.errors %}
-                        <div class = 'alert alert-danger'>
-                            {% for error in field.errors %}
-                            <div class="p-3">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+            <div class="form-group">
 
-                    {{ field.label }}
-                    {{ field }}
+                {% if field.errors %}
+                    <div class = 'alert alert-danger'>
+                        {% for error in field.errors %}
+                        <div class="p-3">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-                </div>
+                {{ form.username.label }}
+                {{ form.username }}
 
-            {% endfor %}
+                {{ form.first_name.label }}
+                {{ form.first_name }}
+
+                {{ form.last_name.label }}
+                {{ form.last_name }}
+
+                {{ form.avatar.label }}
+                {{ form.avatar }}
+
+                {{ form.user_type.label }}
+                {{ form.user_type }}
+
+                {{ form.description.label }}
+                {{ form.description }}
+
+                Пароль
+                {{ form.password1 }}
+
+                Подтверждение пароля
+                {{ form.password2 }}
+
+            </div>
 
             <button type="submit" class = 'btn btn-success col-lg-4'>Зарегистрироваться</button>
 
