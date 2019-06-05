@@ -5,7 +5,7 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
 
-        <a href="{% url 'courses' %}" class="btn btn-outline-info ml-5 mt-5 col-lg-2"> К списку курсов </a>
+        <a href="{% url 'courses' %}" class="btn btn-outline-info mt-5 col-lg-2"> К списку курсов </a>
 
         <div class = 'col-lg-8 p-5'>
 
@@ -27,11 +27,11 @@
         <div class = 'actions'>
 
             {% if user.user_type.id == 1 %}
-                <a href="{{ course.add_lesson }}" class="btn btn-outline-info ml-5 col-lg-2"> Добавить урок </a>
-                <a href="{{ course.update }}" class="btn btn-outline-info ml-5 col-lg-2"> Изменить курс </a>
-                <a href="{{ course.delete_url }}" class="btn btn-outline-danger ml-5 col-lg-2"> Удалить курс </a>
+                <a href="{{ course.add_lesson }}" class="btn btn-outline-info col-lg-2 mt-1"> Добавить урок </a>
+                <a href="{{ course.update }}" class="btn btn-outline-info col-lg-2 mt-1"> Изменить курс </a>
+                <a href="{{ course.delete_url }}" class="btn btn-outline-danger col-lg-2 mt-1"> Удалить курс </a>
             {% else %}
-                <a href="{{ course.join_to_group_url }}" class="btn btn-outline-info ml-5 col-lg-2"> Поступить на курс </a>
+                <a href="{{ course.join_to_group_url }}" class="btn btn-outline-info col-lg-2 mt-1"> Поступить на курс </a>
             {% endif %}
         </div>
 
