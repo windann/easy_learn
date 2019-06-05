@@ -7,7 +7,7 @@
 
     <div class = 'container'>
 
-        <a href="{{ lesson.course.get_absolute_url }}" class="btn btn-outline-info mt-5 ml-5 col-lg-2"> Назад </a>
+        <a href="{{ lesson.course.get_absolute_url }}" class="btn btn-outline-info mt-5 col-lg-2"> Назад </a>
 
         <div class = 'col-lg-8 p-5'>
 
@@ -16,9 +16,9 @@
             <div> {{ lesson.time | time:"H:i" }} </div>
 
         </div>
-        <h4 class="ml-5"> Тестирования по уроку </h4>
+        <h4 class=""> Тестирования по уроку </h4>
         {% if tests %}
-            <ol class="list-group pl-5 pb-5 col-lg-6">
+            <ol class="list-group pb-5 col-lg-6">
                 {% if user.user_type.id == 1 %}
 
                     {% for test in tests %}
@@ -38,24 +38,24 @@
             <div class="ml-5 mt-3 mb-3">Тестирования пока нет</div>
         {% endif %}
 
-        <h4 class="ml-5"> Домашнее задание </h4>
+        <h4> Домашнее задание </h4>
         {% if homework %}
-            <div class="ml-5">{{ homework.text }}</div>
-            <div class="ml-5 mb-5">Необходимо сдать до {{ homework.deadline |date:"SHORT_DATE_FORMAT" }}</div>
+            <div class="">{{ homework.text }}</div>
+            <div class="mb-5">Необходимо сдать до {{ homework.deadline |date:"SHORT_DATE_FORMAT" }}</div>
         {% else %}
-            <div class="ml-5 mt-3 mb-3">Домашнего задания пока нет</div>
+            <div class="mt-3 mb-3">Домашнего задания пока нет</div>
         {% endif %}
 
-        <div class="col-lg-12 d-flex justify-content-around align-items-center">
+        <div class="col-lg-12 d-flex justify-content-around align-items-center row">
             {% if user.user_type.id == 1 %}
-                <a href="{{ lesson.update }}" class="btn btn-outline-info col-lg-2"> Изменить урок </a>
+                <a href="{{ lesson.update }}" class="btn btn-outline-info col-lg-2 col-xs-12 mt-1"> Изменить урок </a>
 
-                <a href="{{ lesson.get_material }}" class="btn btn-outline-info col-lg-2"> Материалы </a>
-                <a href="{{ lesson.add_material }}" class="btn btn-outline-info col-lg-2"> Добавить материал </a>
+                <a href="{{ lesson.get_material }}" class="btn btn-outline-info col-lg-2 col-xs-12 mt-1"> Материалы </a>
+                <a href="{{ lesson.add_material }}" class="btn btn-outline-info col-lg-2 col-xs-12 mt-1"> Добавить материал </a>
                 {% if not homework %}
-                    <a href="{{ lesson.add_homework }}" class="btn btn-outline-info col-lg-2"> Добавить домашнее задание </a>
+                    <a href="{{ lesson.add_homework }}" class="btn btn-outline-info col-lg-2 col-xs-12 mt-1"> Добавить домашнее задание </a>
                 {% endif %}
-                <a href="{{ lesson.delete_url }}" class="btn btn-outline-danger col-lg-2"> Удалить урок </a>
+                <a href="{{ lesson.delete_url }}" class="btn btn-outline-danger col-lg-2 col-xs-12 mt-1"> Удалить урок </a>
 
             {% endif %}
         </div>

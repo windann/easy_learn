@@ -3,19 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <title>Система поддержки процесса дополнительного образования</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/united/bootstrap.min.css" rel="stylesheet" integrity="sha384-WTtvlZJeRyCiKUtbQ88X1x9uHmKi0eHCbQ8irbzqSLkE0DpAZuixT5yFvgX0CjIu" crossorigin="anonymous">    </head>
     <body>
+            {% load static %}
         <header class = 'header'>
-                <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between">
-                    <div class="container">
-                        <ul class="navbar-nav">
+                <nav class="nav navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between">
+                    <div class="container d-flex align-items-center">
+                        <ul class="navbar-nav d d-flex align-items-center col-lg-3 col-xs-12">
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'home' %}">О системе</a>
+                                <a class="nav-link" href="{% url 'home' %}"><img src = '{% static "img/home.png" %}'></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'courses' %}">Курсы</a>
                             </li>
-
                             {% if user.user_type.id == 2 %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'teachers' %}">Преподаватели</a>
@@ -33,20 +34,20 @@
 
                             {% endif %}
                         </ul>
-                    <div class = 'col-lg-7 d-flex justify-content-end align-items-center'>
+                    <div class = 'col-lg-7 col-xs-12 d-flex justify-content-between pr-0 flex-row-reverse align-items-center row'>
 
                         {% if user.is_authenticated %}
-                            <a href="{% url 'user_groups' %}" class="text-success col-lg-3">Мои группы </a>
+                            <a href="{% url 'user_groups' %}" class="btn btn-outline-success col-lg-3 mt-1 col-xs-12 ">Мои группы </a>
                             {% if user.user_type.id == 1 %}
 
-                                <a href="{% url 'course_create_url' %}" class="btn btn-info ml-5 col-lg-3"> Создать курс </a>
-                                <a href="{% url 'test_create_url' %}" class="btn btn-info ml-5 col-lg-4"> Создать тест </a>
+                                <a href="{% url 'course_create_url' %}" class="btn btn-info mt-1 col-lg-3 col-xs-12"> Создать курс </a>
+                                <a href="{% url 'test_create_url' %}" class="btn btn-info mt-1 col-lg-3 col-xs-12"> Создать тест </a>
                             {% endif %}
 
-                            <a href="{% url 'logout' %}" class="btn btn-outline-success ml-5 col-lg-2"> Выход </a>
+                            <a href="{% url 'logout' %}" class="btn btn-outline-success mt-1 col-lg-2 col-xs-12"> Выход </a>
 
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-outline-success ml-5 col-lg-2"> Вход </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-success mt-1 col-lg-2 col-xs-12"> Вход </a>
                         {% endif %}
                     </div>
                     </div>
