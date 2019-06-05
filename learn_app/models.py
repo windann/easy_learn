@@ -92,7 +92,6 @@ class Group(models.Model):
 class User(AbstractUser):
     avatar = models.ImageField(null=True, blank=True, upload_to='media', verbose_name='Аватарка', default='media/default.png')
     user_type = models.ForeignKey(UserType, on_delete=models.CASCADE, null=True, verbose_name='Тип пользвателя')
-    username = models.TextField(verbose_name='Имя пользователя', unique=True)
     description = models.TextField(null=True, verbose_name='О себе')
     first_name = models.TextField(verbose_name='Имя')
     last_name = models.TextField(verbose_name='Фамилия')

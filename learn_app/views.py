@@ -205,7 +205,6 @@ def courses_list(request):
 
 def teachers_list(request):
     teachers = User.objects.filter(user_type=1)
-    print(list(UserType.objects.all()))
     return render(request, 'teachers_list.html', context={'teachers': teachers})
 
 
@@ -295,22 +294,16 @@ class TestPass(View):
         test_result.save()
 
         questions = list(Question.objects.filter(test=id))
-        #print(questions)
 
         test = {}
         for question in questions:
             test[question] = PassTestForm(instance=UserAnswer(), prefix=str(question), data=request.POST)
 
-        print(test.values())
-        print(test.keys())
-
         if all([qf.is_valid() for qf in test.values()]):
             for question, answer in test.items():
-                #print(answer)
                 user_answer = answer.save(commit=False)
                 user_answer.question = question
                 user_answer.test = test_result
-                print(answer.cleaned_data['answer'], "*")
                 user_answer.answer = answer.cleaned_data['answer']
                 user_answer.save()
 
@@ -332,8 +325,6 @@ def check_test_result(request, id):
 
     for answer in answers:
         question = Question.objects.get(id=answer.question.id)
-        print(answer.question.text)
-        print(answer.question.right_answer)
         right_answer = question.right_answer
         if right_answer == answer.answer:
             count_right_answers += 1
@@ -367,8 +358,6 @@ def check_group_rating(request, name):
 def check_group_full_stat(request, name):
     group = get_object_or_404(Group, name__iexact=name)
     course = group.course
-    print(course)
-    print(group.name)
     user_groups = list(UserGroup.objects.filter(group=group))
 
     students = {}
@@ -380,10 +369,7 @@ def check_group_full_stat(request, name):
     test_student = {}
 
     for student in students:
-        print(student.username)
         tests = TestResult.objects.filter(user=student, course=course)
-        print(tests)
-        print(TestResult.objects.all()[0].course)
         tries_count = TestResult.objects.filter(user=student, course=course).annotate(tries=Count('user'))
         try:
             last_try = TestResult.objects.filter(user=student, course=course).latest('date')
@@ -392,8 +378,6 @@ def check_group_full_stat(request, name):
                                      'last_try': 0,
                                      'best_try': 0,
                                      'worst_try': 0}
-            #message = 'Группа пока не проходила тестирования!'
-            #return render(request, 'message.html', context={'message': message})
         else:
 
             answers = UserAnswer.objects.filter(test=last_try)
@@ -531,7 +515,6 @@ def teach_group(request, name):
 
     else:
         if teacher:
-            print('hi')
             message = 'Вы уже обучаете эту группу!'
             return render(request, 'message.html', context={'message': message})
 
